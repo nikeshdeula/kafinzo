@@ -1,7 +1,7 @@
 <?php ob_start(); ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold mb-0">Good Morning, <?= htmlspecialchars($userName ?? 'User') ?></h4>
+    <h4 class="fw-bold mb-0">Good, <?= htmlspecialchars($userName ?? 'User') ?></h4>
     <button class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Create Invoice</button>
 </div>
 
