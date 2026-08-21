@@ -1,0 +1,33 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+
+# Dependencies
+/vendor/
+
+# Storage (user uploads & logs)
+storage/uploads/*
+storage/invoices/*
+storage/logs/*
+!storage/uploads/.gitkeep
+!storage/invoices/.gitkeep
+!storage/logs/.gitkeep
+
+# Playwright
+.playwright-mcp/
+
+# Dev files
+Argument
+Continue
+Stop
+AGENTS.md
