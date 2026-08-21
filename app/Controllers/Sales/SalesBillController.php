@@ -47,6 +47,7 @@ class SalesBillController extends BaseController {
             $tax_amount = 0;
             $discount_amount = 0;
             $total_amount = 0;
+            $tds_amount = 0;
             $items = [];
 
             if (!empty($_POST['items'])) {
@@ -76,6 +77,8 @@ class SalesBillController extends BaseController {
                 }
             }
 
+            $tds_amount = $total_amount * 0.015;
+
             $bill_id = $this->model->create([
                 'business_id' => 1,
                 'customer_id' => $customer_id,
@@ -86,6 +89,7 @@ class SalesBillController extends BaseController {
                 'tax_amount' => $tax_amount,
                 'discount_amount' => $discount_amount,
                 'total_amount' => $total_amount,
+                'tds_amount' => $tds_amount,
                 'paid_amount' => 0,
                 'status' => $status,
                 'notes' => $notes
@@ -127,6 +131,7 @@ class SalesBillController extends BaseController {
             $tax_amount = 0;
             $discount_amount = 0;
             $total_amount = 0;
+            $tds_amount = 0;
             $items = [];
 
             if (!empty($_POST['items'])) {
@@ -156,6 +161,8 @@ class SalesBillController extends BaseController {
                 }
             }
 
+            $tds_amount = $total_amount * 0.015;
+
             $this->model->update($id, [
                 'customer_id' => $customer_id,
                 'bill_number' => $bill_number,
@@ -165,6 +172,7 @@ class SalesBillController extends BaseController {
                 'tax_amount' => $tax_amount,
                 'discount_amount' => $discount_amount,
                 'total_amount' => $total_amount,
+                'tds_amount' => $tds_amount,
                 'paid_amount' => $bill['paid_amount'],
                 'status' => $status,
                 'notes' => $notes

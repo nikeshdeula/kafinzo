@@ -25,7 +25,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <span>KAF<span style="color:#3f37c9">INZO</span></span>
+            <img src="/assets/images/kafinzo_logo.png" alt="Kafinzo" style="width: 120px; height: auto;">
         </div>
 
         <?php

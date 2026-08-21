@@ -32,7 +32,7 @@ class SalesBill {
     }
 
     public function create(array $d): int {
-        $s = $this->db->prepare("INSERT INTO sales_bills (business_id,customer_id,bill_number,bill_date,due_date,subtotal,tax_amount,discount_amount,total_amount,paid_amount,status,notes) VALUES (:bid,:cid,:bn,:bd,:dd,:sub,:tax,:disc,:tot,:paid,:st,:notes)");
+        $s = $this->db->prepare("INSERT INTO sales_bills (business_id,customer_id,bill_number,bill_date,due_date,subtotal,tax_amount,discount_amount,total_amount,tds_amount,paid_amount,status,notes) VALUES (:bid,:cid,:bn,:bd,:dd,:sub,:tax,:disc,:tot,:tds,:paid,:st,:notes)");
         $s->execute([
             'bid'=>$d['business_id']??1,
             'cid'=>$d['customer_id'],
@@ -43,6 +43,7 @@ class SalesBill {
             'tax'=>$d['tax_amount']??0,
             'disc'=>$d['discount_amount']??0,
             'tot'=>$d['total_amount']??0,
+            'tds'=>$d['tds_amount']??0,
             'paid'=>$d['paid_amount']??0,
             'st'=>$d['status']??'draft',
             'notes'=>$d['notes']??null
@@ -51,7 +52,7 @@ class SalesBill {
     }
 
     public function update(int $id, array $d): bool {
-        $s = $this->db->prepare("UPDATE sales_bills SET customer_id=:cid,bill_number=:bn,bill_date=:bd,due_date=:dd,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:tot,paid_amount=:paid,status=:st,notes=:notes WHERE id=:id");
+        $s = $this->db->prepare("UPDATE sales_bills SET customer_id=:cid,bill_number=:bn,bill_date=:bd,due_date=:dd,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:tot,tds_amount=:tds,paid_amount=:paid,status=:st,notes=:notes WHERE id=:id");
         return $s->execute([
             'cid'=>$d['customer_id'],
             'bn'=>$d['bill_number'],
@@ -61,6 +62,7 @@ class SalesBill {
             'tax'=>$d['tax_amount']??0,
             'disc'=>$d['discount_amount']??0,
             'tot'=>$d['total_amount']??0,
+            'tds'=>$d['tds_amount']??0,
             'paid'=>$d['paid_amount']??0,
             'st'=>$d['status']??'draft',
             'notes'=>$d['notes']??null,

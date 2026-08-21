@@ -3,7 +3,7 @@
 <div class="auth-wrapper">
     <div class="auth-card">
         <div class="text-center mb-4">
-            <h2>KAFINZO</h2>
+            <img src="/assets/images/kafinzo_logo.png" alt="Kafinzo" style="width: 200px; height: auto;">
             <p class="text-muted">Sign in to your account</p>
         </div>
 

@@ -70,6 +70,12 @@ body {
     top: 0;
     background: #fff;
     z-index: 1;
+    text-align: center;
+}
+.sidebar-header img {
+    max-width: 100%;
+    height: 28px;
+    width: auto;
 }
 
 .sidebar-nav {
@@ -301,6 +307,11 @@ body {
     color: var(--primary-color);
     text-align: center;
     letter-spacing: 1px;
+}
+.sidebar-header img {
+    max-width: 100%;
+    height: 28px;
+    width: auto;
 }
 
 .sidebar-nav {

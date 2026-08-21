@@ -43,7 +43,7 @@
 </div>
 
 <div class="row g-3 mb-3">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <div class="text-muted small text-uppercase fw-600 mb-1">Total Sales</div>
@@ -51,7 +51,15 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-600 mb-1">Total TDS</div>
+                <div class="h4 mb-0 text-danger">NPR <?= number_format($summary['total_tds'], 2) ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <div class="text-muted small text-uppercase fw-600 mb-1">Total Payments</div>
@@ -59,7 +67,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <div class="text-muted small text-uppercase fw-600 mb-1">Outstanding</div>
@@ -82,7 +90,7 @@
             <thead><tr>
                 <th>Date</th><th>Type</th><th>Ref #</th><th>Customer</th>
                 <th class="text-end">Subtotal</th><th class="text-end">Tax</th><th class="text-end">Discount</th>
-                <th class="text-end">Total</th><th class="text-end">Paid</th><th>Status</th>
+                <th class="text-end">Total</th><th class="text-end">TDS (1.5%)</th><th class="text-end">Grand Total</th><th class="text-end">Paid</th><th>Status</th>
             </tr></thead>
             <tbody>
             <?php foreach ($rows as $r): ?>
@@ -111,6 +119,8 @@
                 <td class="text-end">NPR <?= number_format($r['tax_amount'], 2) ?></td>
                 <td class="text-end">NPR <?= number_format($r['discount_amount'], 2) ?></td>
                 <td class="text-end fw-600">NPR <?= number_format($r['total_amount'], 2) ?></td>
+                <td class="text-end text-danger">NPR <?= number_format($r['tds_amount'] ?? 0, 2) ?></td>
+                <td class="text-end fw-600 text-success">NPR <?= number_format($r['total_amount'] - ($r['tds_amount'] ?? 0), 2) ?></td>
                 <td class="text-end">NPR <?= number_format($r['paid_amount'], 2) ?></td>
                 <td><?= $statusBadge ?></td>
             </tr>

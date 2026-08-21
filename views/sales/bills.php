@@ -56,12 +56,15 @@
         <table class="table table-hover mb-0">
             <thead><tr>
                 <th>Bill #</th><th>Date</th><th>Customer</th><th class="text-end">Total</th>
+                <th class="text-end">TDS (1.5%)</th><th class="text-end">Grand Total</th>
                 <th class="text-end">Paid</th><th class="text-end">Balance</th><th>Status</th><th style="width:110px">Actions</th>
             </tr></thead>
             <tbody>
             <?php foreach ($bills as $b): ?>
             <?php
-                $balance = $b['total_amount'] - $b['paid_amount'];
+                $tds = $b['total_amount'] * 0.015;
+                $grandTotal = $b['total_amount'] - $tds;
+                $balance = $grandTotal - $b['paid_amount'];
                 $statusBadge = match($b['status']) {
                     'draft' => '<span class="badge bg-secondary-subtle text-secondary">Draft</span>',
                     'unpaid' => '<span class="badge bg-warning-subtle text-warning">Unpaid</span>',
@@ -77,6 +80,8 @@
                 <td><?= nepali_date('d M Y', $b['bill_date']) ?></td>
                 <td><?= htmlspecialchars($b['customer_name'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($b['total_amount'], 2) ?></td>
+                <td class="text-end text-danger">NPR <?= number_format($tds, 2) ?></td>
+                <td class="text-end fw-600 text-success">NPR <?= number_format($grandTotal, 2) ?></td>
                 <td class="text-end">NPR <?= number_format($b['paid_amount'], 2) ?></td>
                 <td class="text-end fw-600">NPR <?= number_format($balance, 2) ?></td>
                 <td><?= $statusBadge ?></td>

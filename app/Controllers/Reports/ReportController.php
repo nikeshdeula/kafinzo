@@ -21,6 +21,26 @@ class ReportController extends BaseController
         $this->purchaseStatement = new PurchaseStatement();
     }
 
+    private function getBusinessName(): string
+    {
+        $db = \App\Core\Database::getInstance()->getConnection();
+        $s = $db->prepare("SELECT name FROM businesses WHERE id=1 LIMIT 1");
+        $s->execute();
+        return $s->fetchColumn() ?: 'My Business';
+    }
+
+    private function getPeriodLabel(?string $from, ?string $to): string
+    {
+        if ($from && $to) {
+            return $from . ' to ' . $to;
+        } elseif ($from) {
+            return 'From ' . $from;
+        } elseif ($to) {
+            return 'Until ' . $to;
+        }
+        return 'All Time';
+    }
+
     public function profitLoss()
     {
         $this->requireAuth();
@@ -76,25 +96,61 @@ class ReportController extends BaseController
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
         $rows = $this->salesStatement->getStatement(1, $from, $to, $customer_id);
 
-        $headers = ['Date', 'Type', 'Ref #', 'Customer', 'Subtotal', 'Tax', 'Discount', 'Total', 'Paid', 'Status'];
+        $business = $this->getBusinessName();
+        $period = $this->getPeriodLabel($from, $to);
+
+        $headers = ['Date', 'Company name', 'Bill no.', 'Amount', 'Discount', 'Net amt', '13% Vat Amt', 'Total Amount', '1.5% TDS'];
         $data = [];
+        $totalAmount = 0;
+        $totalDiscount = 0;
+        $totalNet = 0;
+        $totalVat = 0;
+        $totalGrand = 0;
+        $totalTds = 0;
+
         foreach ($rows as $r) {
+            if ($r['type'] === 'payment') continue;
+            $amount = $r['subtotal'];
+            $discount = $r['discount_amount'];
+            $net = $amount - $discount;
+            $vat = $r['tax_amount'];
+            $grand = $r['total_amount'];
+            $tds = $r['tds_amount'] ?? 0;
+
+            $totalAmount += $amount;
+            $totalDiscount += $discount;
+            $totalNet += $net;
+            $totalVat += $vat;
+            $totalGrand += $grand;
+            $totalTds += $tds;
+
             $data[] = [
-                date('Y-m-d', strtotime($r['date'])),
-                ucfirst($r['type']),
-                $r['ref_number'],
+                nepali_date('Y-m-d', $r['date']),
                 $r['party_name'] ?? '—',
-                number_format($r['subtotal'], 2),
-                number_format($r['tax_amount'], 2),
-                number_format($r['discount_amount'], 2),
-                number_format($r['total_amount'], 2),
-                number_format($r['paid_amount'], 2),
-                ucfirst($r['status']),
+                $r['ref_number'],
+                number_format($amount, 2),
+                number_format($discount, 2),
+                number_format($net, 2),
+                number_format($vat, 2),
+                number_format($grand, 2),
+                number_format($tds, 2),
             ];
         }
 
+        $totals = [
+            'total sales',
+            '',
+            '',
+            number_format($totalAmount, 2),
+            number_format($totalDiscount, 2),
+            number_format($totalNet, 2),
+            number_format($totalVat, 2),
+            number_format($totalGrand, 2),
+            number_format($totalTds, 2),
+        ];
+
         $filename = 'sales_statement_'.($from ?: 'all').'_'.($to ?: 'now').'.xls';
-        \excel_export('Sales Statement', $headers, $data, $filename);
+        \excel_export_styled($business, 'Sales Details', $period, $headers, $data, $totals, $filename);
     }
 
     public function purchaseStatement()
@@ -119,24 +175,55 @@ class ReportController extends BaseController
         $supplier_id = isset($_GET['supplier_id']) ? (int)$_GET['supplier_id'] : null;
         $rows = $this->purchaseStatement->getStatement(1, $from, $to, $supplier_id);
 
-        $headers = ['Date', 'Type', 'Ref #', 'Supplier', 'Subtotal', 'Tax', 'Discount', 'Total', 'Paid', 'Status'];
+        $business = $this->getBusinessName();
+        $period = $this->getPeriodLabel($from, $to);
+
+        $headers = ['Date', 'Company name', 'Bill no.', 'Amount', 'Discount', 'Net amt', '13% Vat Amt', 'Total Amount'];
         $data = [];
+        $totalAmount = 0;
+        $totalDiscount = 0;
+        $totalNet = 0;
+        $totalVat = 0;
+        $totalGrand = 0;
+
         foreach ($rows as $r) {
+            if ($r['type'] === 'payment') continue;
+            $amount = $r['subtotal'];
+            $discount = $r['discount_amount'];
+            $net = $amount - $discount;
+            $vat = $r['tax_amount'];
+            $grand = $r['total_amount'];
+
+            $totalAmount += $amount;
+            $totalDiscount += $discount;
+            $totalNet += $net;
+            $totalVat += $vat;
+            $totalGrand += $grand;
+
             $data[] = [
-                date('Y-m-d', strtotime($r['date'])),
-                ucfirst($r['type']),
-                $r['ref_number'],
+                nepali_date('Y-m-d', $r['date']),
                 $r['party_name'] ?? '—',
-                number_format($r['subtotal'], 2),
-                number_format($r['tax_amount'], 2),
-                number_format($r['discount_amount'], 2),
-                number_format($r['total_amount'], 2),
-                number_format($r['paid_amount'], 2),
-                ucfirst($r['status']),
+                $r['ref_number'],
+                number_format($amount, 2),
+                number_format($discount, 2),
+                number_format($net, 2),
+                number_format($vat, 2),
+                number_format($grand, 2),
             ];
         }
 
+        $totals = [
+            'total purchase',
+            '',
+            '',
+            number_format($totalAmount, 2),
+            number_format($totalDiscount, 2),
+            number_format($totalNet, 2),
+            number_format($totalVat, 2),
+            number_format($totalGrand, 2),
+        ];
+
         $filename = 'purchase_statement_'.($from ?: 'all').'_'.($to ?: 'now').'.xls';
-        \excel_export('Purchase Statement', $headers, $data, $filename);
+        \excel_export_styled($business, 'Purchase Details', $period, $headers, $data, $totals, $filename);
     }
 }

@@ -343,6 +343,14 @@
                 <span class="summary-label">TOTAL</span>
                 <span class="summary-value" id="totalDisplay">NPR 0.00</span>
             </div>
+            <div class="summary-row">
+                <span class="summary-label">TDS (1.5%)</span>
+                <span class="summary-value text-danger" id="tdsDisplay">NPR 0.00</span>
+            </div>
+            <div class="summary-row" style="border-top: 2px solid #198754; padding-top: 8px; margin-top: 5px; font-size: 1rem; font-weight: 700; color: #198754;">
+                <span class="summary-label" style="color: #198754;">GRAND TOTAL</span>
+                <span class="summary-value" id="grandTotalDisplay" style="color: #198754; font-size: 1.1rem;">NPR 0.00</span>
+            </div>
         </div>
     </div>
 
@@ -350,6 +358,7 @@
         <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-save me-1"></i> Save</button>
         <a href="/sales/bills" class="btn btn-outline-secondary btn-sm">Cancel</a>
     </div>
+</form>
 </div>
 
 <div class="modal fade quick-create-modal" id="quickCreateModal" tabindex="-1" aria-labelledby="quickCreateTitle" aria-hidden="true">
@@ -498,10 +507,14 @@ function calculateTotals() {
         total += lineTotal;
         row.querySelector('.item-amount').textContent = 'NPR ' + lineTotal.toFixed(2);
     });
+    const tds = total * 0.015;
+    const grandTotal = total - tds;
     document.getElementById('subtotalDisplay').textContent = 'NPR ' + subtotal.toFixed(2);
     document.getElementById('discountDisplay').textContent = 'NPR ' + discount.toFixed(2);
     document.getElementById('taxDisplay').textContent = 'NPR ' + tax.toFixed(2);
     document.getElementById('totalDisplay').textContent = 'NPR ' + total.toFixed(2);
+    document.getElementById('tdsDisplay').textContent = 'NPR ' + tds.toFixed(2);
+    document.getElementById('grandTotalDisplay').textContent = 'NPR ' + grandTotal.toFixed(2);
 }
 document.querySelectorAll('.item-qty, .item-price, .item-discount, .item-tax').forEach(el => {
     el.addEventListener('input', calculateTotals);
