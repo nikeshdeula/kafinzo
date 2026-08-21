@@ -9,7 +9,7 @@ class SalesStatement {
     public function getStatement(int $bid = 1, ?string $from = null, ?string $to = null, ?int $customer_id = null): array {
         $rows = [];
 
-        $sql = "SELECT sb.id, sb.bill_number AS ref_number, sb.bill_date AS date, c.name AS party_name, sb.subtotal, sb.tax_amount, sb.discount_amount, sb.total_amount, sb.tds_amount, sb.paid_amount, sb.status, 'bill' AS type FROM sales_bills sb LEFT JOIN customers c ON sb.customer_id=c.id WHERE sb.business_id=:bid";
+        $sql = "SELECT sb.id, sb.bill_number AS ref_number, sb.bill_date AS date, c.name AS party_name, sb.subtotal, sb.tax_amount, sb.discount_amount, sb.total_amount, COALESCE(sb.tds_amount, 0) AS tds_amount, sb.paid_amount, sb.status, 'bill' AS type FROM sales_bills sb LEFT JOIN customers c ON sb.customer_id=c.id WHERE sb.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($from) { $sql .= " AND sb.bill_date >= :from"; $params['from'] = $from; }
         if ($to) { $sql .= " AND sb.bill_date <= :to"; $params['to'] = $to; }
