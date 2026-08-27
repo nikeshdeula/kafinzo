@@ -28,6 +28,14 @@ class BaseController
         if (!isset($_SESSION['user_id'])) {
             redirect('/login');
         }
+        if (!isset($_SESSION['business_id'])) {
+            redirect('/login');
+        }
+    }
+
+    protected function businessId(): int
+    {
+        return (int)($_SESSION['business_id'] ?? 1);
     }
 
     protected function currentUser()

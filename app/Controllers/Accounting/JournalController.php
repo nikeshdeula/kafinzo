@@ -108,7 +108,7 @@ class JournalController extends BaseController
 
         $journalNumber = $this->journal->nextNumber();
         $journalId = $this->journal->create([
-            'business_id'   => 1,
+            'business_id'   => $this->businessId(),
             'journal_number' => $journalNumber,
             'entry_date'     => $entryDate,
             'description'    => $description,
@@ -117,7 +117,7 @@ class JournalController extends BaseController
 
         foreach ($rows as $row) {
             $this->ledger->create([
-                'business_id'      => 1,
+                'business_id'      => $this->businessId(),
                 'journal_entry_id' => $journalId,
                 'account_id'       => $row['account_id'],
                 'description'      => $row['description'],
@@ -218,7 +218,7 @@ class JournalController extends BaseController
 
         foreach ($rows as $row) {
             $this->ledger->create([
-                'business_id'      => 1,
+                'business_id'      => $this->businessId(),
                 'journal_entry_id' => $id,
                 'account_id'       => $row['account_id'],
                 'description'      => $row['description'],

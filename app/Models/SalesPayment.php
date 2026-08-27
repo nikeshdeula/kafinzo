@@ -6,7 +6,7 @@ class SalesPayment {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
         $s = $this->db->prepare("SELECT sp.*,c.name AS customer_name,i.invoice_number FROM sales_payments sp LEFT JOIN customers c ON sp.customer_id=c.id LEFT JOIN invoices i ON sp.invoice_id=i.id WHERE sp.business_id=:bid ORDER BY sp.payment_date DESC, sp.id DESC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
@@ -22,7 +22,7 @@ class SalesPayment {
         return (int)$this->db->lastInsertId();
     }
 
-    public function totalReceived(int $bid = 1): float {
+    public function totalReceived(int $bid = $_SESSION['business_id'] ?? 1): float {
         $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM sales_payments WHERE business_id=:bid");
         $s->execute(['bid'=>$bid]); return (float)$s->fetchColumn();
     }

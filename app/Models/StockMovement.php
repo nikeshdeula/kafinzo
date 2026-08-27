@@ -6,7 +6,7 @@ class StockMovement {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1, array $filters = []): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1, array $filters = []): array {
         $sql = "SELECT sm.*, p.name AS product_name, w.name AS warehouse_name
                 FROM stock_movements sm
                 LEFT JOIN products p ON sm.product_id = p.id

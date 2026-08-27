@@ -23,7 +23,7 @@ class PurchasePaymentController extends BaseController {
 
     public function index() {
         $this->requireAuth();
-        $payments = $this->model->all(1);
+        $payments = $this->model->all($this->businessId());
         $title = 'Supplier Payments';
         return view('purchases/payments', compact('payments', 'title'));
     }
@@ -47,7 +47,7 @@ class PurchasePaymentController extends BaseController {
             }
 
             $this->model->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'bill_id' => $bill_id,
                 'order_id' => $order_id,
                 'supplier_id' => $supplier_id,

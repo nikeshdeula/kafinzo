@@ -47,7 +47,7 @@ class SalesPaymentController extends BaseController {
             }
 
             $this->paymentModel->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'invoice_id' => $invoiceId,
                 'customer_id' => $customerId,
                 'payment_date' => $paymentDate,

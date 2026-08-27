@@ -22,7 +22,7 @@ class SalesBillController extends BaseController {
         $this->requireAuth();
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
         $status = $_GET['status'] ?? null;
-        $bills = $this->model->all(1, $customer_id, $status);
+        $bills = $this->model->all($this->businessId(), $customer_id, $status);
         $customers = $this->customerModel->all();
         $title = 'Sales Bills';
         return view('sales/bills', compact('bills', 'customers', 'customer_id', 'status', 'title'));
@@ -80,7 +80,7 @@ class SalesBillController extends BaseController {
             $tds_amount = $total_amount * 0.015;
 
             $bill_id = $this->model->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'customer_id' => $customer_id,
                 'bill_number' => $bill_number,
                 'bill_date' => $bill_date,

@@ -45,7 +45,7 @@ class InvoiceController extends BaseController {
             }
 
             $invoiceId = $this->invoiceModel->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'customer_id' => $customerId,
                 'invoice_number' => $invoiceNumber,
                 'invoice_date' => $invoiceDate,

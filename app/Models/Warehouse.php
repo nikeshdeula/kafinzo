@@ -6,7 +6,7 @@ class Warehouse {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
         $s = $this->db->prepare("SELECT * FROM warehouses WHERE business_id=:bid ORDER BY name ASC");
         $s->execute(['bid' => $bid]);
         return $s->fetchAll();
@@ -44,7 +44,7 @@ class Warehouse {
         return $s->execute(['id' => $id]);
     }
 
-    public function defaultWarehouse(int $bid = 1): array|false {
+    public function defaultWarehouse(int $bid = $_SESSION['business_id'] ?? 1): array|false {
         $s = $this->db->prepare("SELECT * FROM warehouses WHERE business_id=:bid AND is_default=1 LIMIT 1");
         $s->execute(['bid' => $bid]);
         return $s->fetch();

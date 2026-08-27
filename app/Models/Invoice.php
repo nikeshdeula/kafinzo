@@ -6,7 +6,7 @@ class Invoice {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
         $s = $this->db->prepare("SELECT i.*,c.name AS customer_name FROM invoices i LEFT JOIN customers c ON i.customer_id=c.id WHERE i.business_id=:bid ORDER BY i.invoice_date DESC, i.id DESC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
@@ -38,7 +38,7 @@ class Invoice {
         return $s->execute(['id'=>$id]);
     }
 
-    public function nextNumber(int $bid = 1): string {
+    public function nextNumber(int $bid = $_SESSION['business_id'] ?? 1): string {
         $y = date('y');
         $prefix = "INV-{$y}-";
         $s = $this->db->prepare("SELECT invoice_number FROM invoices WHERE business_id=:bid AND invoice_number LIKE :p ORDER BY id DESC LIMIT 1");

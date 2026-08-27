@@ -22,7 +22,7 @@ class SalesOrderController extends BaseController {
         $this->requireAuth();
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
         $status = $_GET['status'] ?? null;
-        $orders = $this->model->all(1, $customer_id, $status);
+        $orders = $this->model->all($this->businessId(), $customer_id, $status);
         $customers = $this->customerModel->all();
         $title = 'Sales Orders';
         return view('sales/orders', compact('orders', 'customers', 'customer_id', 'status', 'title'));
@@ -77,7 +77,7 @@ class SalesOrderController extends BaseController {
             }
 
             $order_id = $this->model->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'customer_id' => $customer_id,
                 'order_number' => $order_number,
                 'order_date' => $order_date,

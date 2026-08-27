@@ -80,8 +80,8 @@ class ReportController extends BaseController
         $from = $_GET['from'] ?? null;
         $to = $_GET['to'] ?? null;
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
-        $rows = $this->salesStatement->getStatement(1, $from, $to, $customer_id);
-        $summary = $this->salesStatement->getSummary(1, $from, $to, $customer_id);
+        $rows = $this->salesStatement->getStatement($this->businessId(), $from, $to, $customer_id);
+        $summary = $this->salesStatement->getSummary($this->businessId(), $from, $to, $customer_id);
         $customers = $this->salesStatement->customers();
         $pageTitle = 'Sales Statement';
         $pageDesc = 'View sales transactions and payment history.';
@@ -94,7 +94,7 @@ class ReportController extends BaseController
         $from = $_GET['from'] ?? null;
         $to = $_GET['to'] ?? null;
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
-        $rows = $this->salesStatement->getStatement(1, $from, $to, $customer_id);
+        $rows = $this->salesStatement->getStatement($this->businessId(), $from, $to, $customer_id);
 
         $business = $this->getBusinessName();
         $period = $this->getPeriodLabel($from, $to);
@@ -159,8 +159,8 @@ class ReportController extends BaseController
         $from = $_GET['from'] ?? null;
         $to = $_GET['to'] ?? null;
         $supplier_id = isset($_GET['supplier_id']) ? (int)$_GET['supplier_id'] : null;
-        $rows = $this->purchaseStatement->getStatement(1, $from, $to, $supplier_id);
-        $summary = $this->purchaseStatement->getSummary(1, $from, $to, $supplier_id);
+        $rows = $this->purchaseStatement->getStatement($this->businessId(), $from, $to, $supplier_id);
+        $summary = $this->purchaseStatement->getSummary($this->businessId(), $from, $to, $supplier_id);
         $suppliers = $this->purchaseStatement->suppliers();
         $pageTitle = 'Purchase Statement';
         $pageDesc = 'View purchase transactions and payment history.';
@@ -173,7 +173,7 @@ class ReportController extends BaseController
         $from = $_GET['from'] ?? null;
         $to = $_GET['to'] ?? null;
         $supplier_id = isset($_GET['supplier_id']) ? (int)$_GET['supplier_id'] : null;
-        $rows = $this->purchaseStatement->getStatement(1, $from, $to, $supplier_id);
+        $rows = $this->purchaseStatement->getStatement($this->businessId(), $from, $to, $supplier_id);
 
         $business = $this->getBusinessName();
         $period = $this->getPeriodLabel($from, $to);

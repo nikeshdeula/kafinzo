@@ -22,7 +22,7 @@ class PurchaseBillController extends BaseController {
         $this->requireAuth();
         $supplier_id = isset($_GET['supplier_id']) ? (int)$_GET['supplier_id'] : null;
         $status = $_GET['status'] ?? null;
-        $bills = $this->model->all(1, $supplier_id, $status);
+        $bills = $this->model->all($this->businessId(), $supplier_id, $status);
         $suppliers = $this->supplierModel->all();
         $title = 'Purchase Bills';
         return view('purchases/bills', compact('bills', 'suppliers', 'supplier_id', 'status', 'title'));
@@ -80,7 +80,7 @@ class PurchaseBillController extends BaseController {
             }
 
             $bill_id = $this->model->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'supplier_id' => $supplier_id,
                 'bill_number' => $bill_number,
                 'bill_date' => $bill_date,

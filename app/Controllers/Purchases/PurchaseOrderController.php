@@ -25,7 +25,7 @@ class PurchaseOrderController extends BaseController {
         $this->requireAuth();
         $supplier_id = isset($_GET['supplier_id']) ? (int)$_GET['supplier_id'] : null;
         $status = $_GET['status'] ?? null;
-        $orders = $this->model->all(1, $supplier_id, $status);
+        $orders = $this->model->all($this->businessId(), $supplier_id, $status);
         $suppliers = $this->supplierModel->all();
         $title = 'Purchase Orders';
         return view('purchases/orders', compact('orders', 'suppliers', 'supplier_id', 'status', 'title'));
@@ -80,7 +80,7 @@ class PurchaseOrderController extends BaseController {
             }
 
             $order_id = $this->model->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'supplier_id' => $supplier_id,
                 'order_number' => $order_number,
                 'order_date' => $order_date,
@@ -200,7 +200,7 @@ class PurchaseOrderController extends BaseController {
         if (!$order) { $_SESSION['error'] = 'Order not found.'; redirect('/purchases/orders'); }
 
         $bill_id = $this->billModel->create([
-            'business_id' => 1,
+            'business_id' => $this->businessId(),
             'supplier_id' => $order['supplier_id'],
             'bill_number' => $this->billModel->nextNumber(),
             'bill_date' => date('Y-m-d'),

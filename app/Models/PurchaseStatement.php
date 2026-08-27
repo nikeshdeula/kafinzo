@@ -6,7 +6,7 @@ class PurchaseStatement {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function getStatement(int $bid = 1, ?string $from = null, ?string $to = null, ?int $supplier_id = null): array {
+    public function getStatement(int $bid = $_SESSION['business_id'] ?? 1, ?string $from = null, ?string $to = null, ?int $supplier_id = null): array {
         $rows = [];
 
         $sql = "SELECT pb.id, pb.bill_number AS ref_number, pb.bill_date AS date, s.name AS party_name, pb.subtotal, pb.tax_amount, pb.discount_amount, pb.total_amount, pb.paid_amount, pb.status, 'bill' AS type FROM purchase_bills pb LEFT JOIN suppliers s ON pb.supplier_id=s.id WHERE pb.business_id=:bid";
@@ -31,7 +31,7 @@ class PurchaseStatement {
         return $rows;
     }
 
-    public function getSummary(int $bid = 1, ?string $from = null, ?string $to = null, ?int $supplier_id = null): array {
+    public function getSummary(int $bid = $_SESSION['business_id'] ?? 1, ?string $from = null, ?string $to = null, ?int $supplier_id = null): array {
         $rows = $this->getStatement($bid, $from, $to, $supplier_id);
         $totalPurchases = 0;
         $totalPayments = 0;
@@ -52,7 +52,7 @@ class PurchaseStatement {
         ];
     }
 
-    public function suppliers(int $bid = 1): array {
+    public function suppliers(int $bid = $_SESSION['business_id'] ?? 1): array {
         $s = $this->db->prepare("SELECT id, name FROM suppliers WHERE business_id=:bid AND status='active' ORDER BY name");
         $s->execute(['bid'=>$bid]);
         return $s->fetchAll();

@@ -6,7 +6,7 @@ class Customer {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
         $s = $this->db->prepare("SELECT * FROM customers WHERE business_id=:bid ORDER BY name ASC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }

@@ -6,7 +6,7 @@ class Quotation {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
         $s = $this->db->prepare("SELECT q.*,c.name AS customer_name FROM quotations q LEFT JOIN customers c ON q.customer_id=c.id WHERE q.business_id=:bid ORDER BY q.quotation_date DESC, q.id DESC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
@@ -38,7 +38,7 @@ class Quotation {
         return $s->execute(['id'=>$id]);
     }
 
-    public function nextNumber(int $bid = 1): string {
+    public function nextNumber(int $bid = $_SESSION['business_id'] ?? 1): string {
         $y = date('y');
         $prefix = "QT-{$y}-";
         $s = $this->db->prepare("SELECT quotation_number FROM quotations WHERE business_id=:bid AND quotation_number LIKE :p ORDER BY id DESC LIMIT 1");

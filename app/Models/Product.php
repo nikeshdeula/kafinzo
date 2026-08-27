@@ -6,7 +6,7 @@ class Product {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
         $s = $this->db->prepare("SELECT p.*,c.name AS category_name,u.abbreviation AS unit_abbr FROM products p LEFT JOIN product_categories c ON p.category_id=c.id LEFT JOIN units u ON p.unit_id=u.id WHERE p.business_id=:bid ORDER BY p.name ASC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }

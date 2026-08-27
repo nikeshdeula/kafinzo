@@ -6,7 +6,7 @@ class SalesBill {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1, ?int $customer_id = null, ?string $status = null): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1, ?int $customer_id = null, ?string $status = null): array {
         $sql = "SELECT b.*, c.name AS customer_name FROM sales_bills b LEFT JOIN customers c ON b.customer_id=c.id WHERE b.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($customer_id) { $sql .= " AND b.customer_id=:cid"; $params['cid'] = $customer_id; }
@@ -76,7 +76,7 @@ class SalesBill {
         return $s->execute(['id'=>$id]);
     }
 
-    public function nextNumber(int $bid = 1): string {
+    public function nextNumber(int $bid = $_SESSION['business_id'] ?? 1): string {
         $s = $this->db->prepare("SELECT COUNT(*) FROM sales_bills WHERE business_id=:bid");
         $s->execute(['bid'=>$bid]);
         $count = (int)$s->fetchColumn() + 1;

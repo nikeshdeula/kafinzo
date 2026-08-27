@@ -24,7 +24,7 @@ class StockController extends BaseController {
             'from_date'      => $_GET['from_date'] ?? '',
             'to_date'        => $_GET['to_date'] ?? '',
         ];
-        $movements = $this->model->all(1, array_filter($filters));
+        $movements = $this->model->all($this->businessId(), array_filter($filters));
         $products = $this->productModel->all();
         $warehouses = $this->warehouseModel->all();
         $title = 'Stock Movements';

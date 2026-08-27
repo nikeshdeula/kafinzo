@@ -6,7 +6,7 @@ class Category {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 1): array {
+    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
         $s = $this->db->prepare("SELECT * FROM product_categories WHERE business_id=:bid ORDER BY name ASC");
         $s->execute(['bid' => $bid]);
         return $s->fetchAll();
@@ -42,7 +42,7 @@ class Category {
         return $s->execute(['id' => $id]);
     }
 
-    public function count(int $bid = 1): int {
+    public function count(int $bid = $_SESSION['business_id'] ?? 1): int {
         $s = $this->db->prepare("SELECT COUNT(*) FROM product_categories WHERE business_id=:bid");
         $s->execute(['bid' => $bid]);
         return (int)$s->fetchColumn();

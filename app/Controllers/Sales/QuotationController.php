@@ -45,7 +45,7 @@ class QuotationController extends BaseController {
             }
 
             $quotationId = $this->quotationModel->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'customer_id' => $customerId,
                 'quotation_number' => $quotationNumber,
                 'quotation_date' => $quotationDate,
@@ -183,7 +183,7 @@ class QuotationController extends BaseController {
             $dueDate = date('Y-m-d', strtotime($validUntil));
 
             $invoiceId = $invoiceModel->create([
-                'business_id' => 1,
+                'business_id' => $this->businessId(),
                 'customer_id' => $quotation['customer_id'],
                 'invoice_number' => $invoiceNumber,
                 'invoice_date' => date('Y-m-d'),
