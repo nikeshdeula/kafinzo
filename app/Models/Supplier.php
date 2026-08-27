@@ -6,7 +6,8 @@ class Supplier {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
+    public function all(int $bid = 0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s = $this->db->prepare("SELECT * FROM suppliers WHERE business_id=:bid ORDER BY name ASC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }

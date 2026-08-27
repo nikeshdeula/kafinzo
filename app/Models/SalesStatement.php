@@ -6,7 +6,8 @@ class SalesStatement {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function getStatement(int $bid = $_SESSION['business_id'] ?? 1, ?string $from = null, ?string $to = null, ?int $customer_id = null): array {
+    public function getStatement(int $bid = 0, ?string $from = null, ?string $to = null, ?int $customer_id = null): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $rows = [];
 
         $sql = "SELECT sb.id, sb.bill_number AS ref_number, sb.bill_date AS date, c.name AS party_name, sb.subtotal, sb.tax_amount, sb.discount_amount, sb.total_amount, COALESCE(sb.tds_amount, 0) AS tds_amount, sb.paid_amount, sb.status, 'bill' AS type FROM sales_bills sb LEFT JOIN customers c ON sb.customer_id=c.id WHERE sb.business_id=:bid";
@@ -40,7 +41,8 @@ class SalesStatement {
         return $rows;
     }
 
-    public function getSummary(int $bid = $_SESSION['business_id'] ?? 1, ?string $from = null, ?string $to = null, ?int $customer_id = null): array {
+    public function getSummary(int $bid = 0, ?string $from = null, ?string $to = null, ?int $customer_id = null): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $rows = $this->getStatement($bid, $from, $to, $customer_id);
         $totalSales = 0;
         $totalPayments = 0;
@@ -64,7 +66,8 @@ class SalesStatement {
         ];
     }
 
-    public function customers(int $bid = $_SESSION['business_id'] ?? 1): array {
+    public function customers(int $bid = 0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s = $this->db->prepare("SELECT id, name FROM customers WHERE business_id=:bid AND status='active' ORDER BY name");
         $s->execute(['bid'=>$bid]);
         return $s->fetchAll();

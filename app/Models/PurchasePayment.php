@@ -6,7 +6,8 @@ class PurchasePayment {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = $_SESSION['business_id'] ?? 1): array {
+    public function all(int $bid = 0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s = $this->db->prepare("SELECT p.*, s.name AS supplier_name FROM purchase_payments p LEFT JOIN suppliers s ON p.supplier_id=s.id WHERE p.business_id=:bid ORDER BY p.payment_date DESC, p.id DESC");
         $s->execute(['bid'=>$bid]);
         return $s->fetchAll();
@@ -34,7 +35,8 @@ class PurchasePayment {
         return (int)$this->db->lastInsertId();
     }
 
-    public function nextNumber(int $bid = $_SESSION['business_id'] ?? 1): string {
+    public function nextNumber(int $bid = 0): string {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s = $this->db->prepare("SELECT COUNT(*) FROM purchase_payments WHERE business_id=:bid");
         $s->execute(['bid'=>$bid]);
         $count = (int)$s->fetchColumn() + 1;
