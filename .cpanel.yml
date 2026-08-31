@@ -1,4 +1,4 @@
 ---
 deployment:
   tasks:
-    - command: rsync -av /home/anamolfa/kafinzo.anamolfacilitycleaners.com/ /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/
+    - /bin/true
