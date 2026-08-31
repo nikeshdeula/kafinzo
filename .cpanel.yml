@@ -1,5 +1,4 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/
-    - /bin/cp -R * $DEPLOYPATH
+    - /bin/cp -R * /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/
