@@ -1,6 +1,4 @@
 ---
 deployment:
   tasks:
-    - /bin/cp -a * /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/
-    - /bin/cp -a .htaccess /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/ 2>/dev/null; true
-    - /bin/cp -a .env /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/ 2>/dev/null; true
+    - command: rsync -av /home/anamolfa/kafinzo.anamolfacilitycleaners.com/ /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/
