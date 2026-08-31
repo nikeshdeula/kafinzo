@@ -31,3 +31,6 @@ Argument
 Continue
 Stop
 AGENTS.md
+diag.php
+fix_multitenancy.php
+cleanup*.php
