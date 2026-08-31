@@ -56,18 +56,20 @@ class Account
         ]);
     }
 
-    public function findById(int $id): array|false
+    public function findById(int $id, int $businessId = 0): array|false
     {
-        $stmt = $this->db->prepare("SELECT * FROM accounts WHERE id = :id LIMIT 1");
-        $stmt->execute(['id' => $id]);
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        $stmt = $this->db->prepare("SELECT * FROM accounts WHERE id = :id AND business_id = :bid LIMIT 1");
+        $stmt->execute(['id' => $id, 'bid' => $businessId]);
         return $stmt->fetch();
     }
 
-    public function update(int $id, array $data): bool
+    public function update(int $id, array $data, int $businessId = 0): bool
     {
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
         $stmt = $this->db->prepare(
             "UPDATE accounts SET code=:code, name=:name, type=:type, sub_type=:sub_type, description=:description, opening_balance=:opening_balance
-             WHERE id=:id AND is_system=FALSE"
+             WHERE id=:id AND business_id=:bid AND is_system=FALSE"
         );
         return $stmt->execute([
             'code'            => $data['code'],
@@ -77,6 +79,7 @@ class Account
             'description'     => $data['description'] ?? null,
             'opening_balance' => $data['opening_balance'] ?? 0,
             'id'              => $id,
+            'bid'             => $businessId,
         ]);
     }
 

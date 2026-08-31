@@ -13,10 +13,10 @@ class Category {
         return $s->fetchAll();
     }
 
-    public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT * FROM product_categories WHERE id=:id LIMIT 1");
-        $s->execute(['id' => $id]);
-        return $s->fetch();
+    public function find(int $id, int $bid = 0): array|false {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("SELECT * FROM product_categories WHERE id=:id AND business_id=:bid LIMIT 1");
+        $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
 
     public function create(array $d): int {
@@ -29,18 +29,16 @@ class Category {
         return (int)$this->db->lastInsertId();
     }
 
-    public function update(array $d): bool {
-        $s = $this->db->prepare("UPDATE product_categories SET name=:name, description=:desc WHERE id=:id");
-        return $s->execute([
-            'name' => $d['name'],
-            'desc' => $d['description'] ?? null,
-            'id'   => $d['id'],
-        ]);
+    public function update(array $d, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("UPDATE product_categories SET name=:name, description=:desc WHERE id=:id AND business_id=:bid");
+        return $s->execute(['name'=>$d['name'],'desc'=>$d['description']??null,'id'=>$d['id'],'bid'=>$bid]);
     }
 
-    public function delete(int $id): bool {
-        $s = $this->db->prepare("DELETE FROM product_categories WHERE id=:id");
-        return $s->execute(['id' => $id]);
+    public function delete(int $id, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("DELETE FROM product_categories WHERE id=:id AND business_id=:bid");
+        return $s->execute(['id'=>$id,'bid'=>$bid]);
     }
 
     public function count(int $bid = 0): int {

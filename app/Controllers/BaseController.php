@@ -35,7 +35,11 @@ class BaseController
 
     protected function businessId(): int
     {
-        return (int)($_SESSION['business_id'] ?? 1);
+        $bid = (int)($_SESSION['business_id'] ?? 0);
+        if ($bid === 0) {
+            redirect('/login');
+        }
+        return $bid;
     }
 
     protected function currentUser()

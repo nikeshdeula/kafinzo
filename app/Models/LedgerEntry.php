@@ -45,16 +45,17 @@ class LedgerEntry
         return $stmt->fetchAll();
     }
 
-    public function getByJournal(int $journalEntryId): array
+    public function getByJournal(int $journalEntryId, int $businessId = 0): array
     {
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
         $stmt = $this->db->prepare(
             "SELECT le.*, a.code, a.name as account_name
              FROM ledger_entries le
              JOIN accounts a ON le.account_id = a.id
-             WHERE le.journal_entry_id = :jid
+             WHERE le.journal_entry_id = :jid AND le.business_id = :bid
              ORDER BY le.id ASC"
         );
-        $stmt->execute(['jid' => $journalEntryId]);
+        $stmt->execute(['jid' => $journalEntryId, 'bid' => $businessId]);
         return $stmt->fetchAll();
     }
 
@@ -74,10 +75,11 @@ class LedgerEntry
         ]);
     }
 
-    public function deleteByJournal(int $journalEntryId): bool
+    public function deleteByJournal(int $journalEntryId, int $businessId = 0): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM ledger_entries WHERE journal_entry_id = :jid");
-        $stmt->execute(['jid' => $journalEntryId]);
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        $stmt = $this->db->prepare("DELETE FROM ledger_entries WHERE journal_entry_id = :jid AND business_id = :bid");
+        $stmt->execute(['jid' => $journalEntryId, 'bid' => $businessId]);
         return true;
     }
 

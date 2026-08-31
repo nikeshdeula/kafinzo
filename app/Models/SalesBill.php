@@ -18,13 +18,14 @@ class SalesBill {
         return $s->fetchAll();
     }
 
-    public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT * FROM sales_bills WHERE id=:id LIMIT 1");
-        $s->execute(['id'=>$id]); return $s->fetch();
+    public function find(int $id, int $bid = 0): array|false {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("SELECT * FROM sales_bills WHERE id=:id AND business_id=:bid LIMIT 1");
+        $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
 
-    public function findWithItems(int $id): array|false {
-        $bill = $this->find($id);
+    public function findWithItems(int $id, int $bid = 0): array|false {
+        $bill = $this->find($id, $bid);
         if (!$bill) return false;
         $s = $this->db->prepare("SELECT * FROM sales_bill_items WHERE sales_bill_id=:bid");
         $s->execute(['bid'=>$id]);
@@ -52,29 +53,19 @@ class SalesBill {
         return (int)$this->db->lastInsertId();
     }
 
-    public function update(int $id, array $d): bool {
-        $s = $this->db->prepare("UPDATE sales_bills SET customer_id=:cid,bill_number=:bn,bill_date=:bd,due_date=:dd,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:tot,tds_amount=:tds,paid_amount=:paid,status=:st,notes=:notes WHERE id=:id");
+    public function update(int $id, array $d, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("UPDATE sales_bills SET customer_id=:cid,bill_number=:bn,bill_date=:bd,due_date=:dd,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:tot,tds_amount=:tds,paid_amount=:paid,status=:st,notes=:notes WHERE id=:id AND business_id=:bid");
         return $s->execute([
-            'cid'=>$d['customer_id'],
-            'bn'=>$d['bill_number'],
-            'bd'=>$d['bill_date'],
-            'dd'=>$d['due_date']??null,
-            'sub'=>$d['subtotal']??0,
-            'tax'=>$d['tax_amount']??0,
-            'disc'=>$d['discount_amount']??0,
-            'tot'=>$d['total_amount']??0,
-            'tds'=>$d['tds_amount']??0,
-            'paid'=>$d['paid_amount']??0,
-            'st'=>$d['status']??'draft',
-            'notes'=>$d['notes']??null,
-            'id'=>$id
+            'cid'=>$d['customer_id'],'bn'=>$d['bill_number'],'bd'=>$d['bill_date'],'dd'=>$d['due_date']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'tot'=>$d['total_amount']??0,'tds'=>$d['tds_amount']??0,'paid'=>$d['paid_amount']??0,'st'=>$d['status']??'draft','notes'=>$d['notes']??null,'id'=>$id,'bid'=>$bid
         ]);
     }
 
-    public function delete(int $id): bool {
-        $this->db->prepare("DELETE FROM sales_bill_items WHERE sales_bill_id=:id")->execute(['id'=>$id]);
-        $s = $this->db->prepare("DELETE FROM sales_bills WHERE id=:id");
-        return $s->execute(['id'=>$id]);
+    public function delete(int $id, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $this->db->prepare("DELETE FROM sales_bill_items WHERE sales_bill_id=:id AND business_id IN (SELECT business_id FROM sales_bills WHERE id=:id2)")->execute(['id'=>$id,'id2'=>$id]);
+        $s = $this->db->prepare("DELETE FROM sales_bills WHERE id=:id AND business_id=:bid");
+        return $s->execute(['id'=>$id,'bid'=>$bid]);
     }
 
     public function nextNumber(int $bid = 0): string {

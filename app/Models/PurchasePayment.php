@@ -13,9 +13,10 @@ class PurchasePayment {
         return $s->fetchAll();
     }
 
-    public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT * FROM purchase_payments WHERE id=:id LIMIT 1");
-        $s->execute(['id'=>$id]); return $s->fetch();
+    public function find(int $id, int $bid = 0): array|false {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("SELECT * FROM purchase_payments WHERE id=:id AND business_id=:bid LIMIT 1");
+        $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
 
     public function create(array $d): int {

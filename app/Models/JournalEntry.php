@@ -22,10 +22,11 @@ class JournalEntry
         return $stmt->fetchAll();
     }
 
-    public function find(int $id): array|false
+    public function find(int $id, int $businessId = 0): array|false
     {
-        $stmt = $this->db->prepare("SELECT * FROM journal_entries WHERE id = :id LIMIT 1");
-        $stmt->execute(['id' => $id]);
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        $stmt = $this->db->prepare("SELECT * FROM journal_entries WHERE id = :id AND business_id = :bid LIMIT 1");
+        $stmt->execute(['id' => $id, 'bid' => $businessId]);
         return $stmt->fetch();
     }
 
@@ -45,24 +46,27 @@ class JournalEntry
         return (int)$this->db->lastInsertId();
     }
 
-    public function update(int $id, array $data): bool
+    public function update(int $id, array $data, int $businessId = 0): bool
     {
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
         $stmt = $this->db->prepare(
             "UPDATE journal_entries SET entry_date = :entry_date, description = :description, reference = :reference
-             WHERE id = :id"
+             WHERE id = :id AND business_id = :bid"
         );
         return $stmt->execute([
             'entry_date'  => $data['entry_date'],
             'description' => $data['description'],
             'reference'   => $data['reference'] ?? null,
             'id'          => $id,
+            'bid'         => $businessId,
         ]);
     }
 
-    public function delete(int $id): bool
+    public function delete(int $id, int $businessId = 0): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM journal_entries WHERE id = :id");
-        $stmt->execute(['id' => $id]);
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        $stmt = $this->db->prepare("DELETE FROM journal_entries WHERE id = :id AND business_id = :bid");
+        $stmt->execute(['id' => $id, 'bid' => $businessId]);
         return true;
     }
 

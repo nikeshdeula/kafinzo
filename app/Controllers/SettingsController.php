@@ -30,12 +30,12 @@ class SettingsController extends BaseController {
         $activeTab = 'business';
 
         $db = Database::getInstance()->getConnection();
-        $s = $db->prepare("SELECT * FROM businesses LIMIT 1");
-        $s->execute();
+        $bid = $this->businessId();
+        $s = $db->prepare("SELECT * FROM businesses WHERE id=:bid LIMIT 1");
+        $s->execute(['bid' => $bid]);
         $business = $s->fetch() ?: [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $existing = $db->query("SELECT id FROM businesses LIMIT 1")->fetch();
             $data = [
                 'n' => trim($_POST['name'] ?? ''),
                 'a' => trim($_POST['address'] ?? ''),
@@ -44,12 +44,12 @@ class SettingsController extends BaseController {
                 'pan' => trim($_POST['pan'] ?? ''),
                 'vat' => trim($_POST['vat'] ?? ''),
             ];
-            if ($existing) {
+            if ($business) {
                 $s = $db->prepare("UPDATE businesses SET name=:n,address=:a,phone=:p,email=:e,pan_number=:pan,vat_number=:vat WHERE id=:id");
-                $s->execute(array_merge($data, ['id' => $existing['id']]));
+                $s->execute(array_merge($data, ['id' => $bid]));
             } else {
-                $s = $db->prepare("INSERT INTO businesses (name,address,phone,email,pan_number,vat_number) VALUES (:n,:a,:p,:e,:pan,:vat)");
-                $s->execute($data);
+                $s = $db->prepare("INSERT INTO businesses (id,name,address,phone,email,pan_number,vat_number) VALUES (:id,:n,:a,:p,:e,:pan,:vat)");
+                $s->execute(array_merge($data, ['id' => $bid]));
             }
             $_SESSION['success'] = 'Business settings updated successfully.';
             redirect('/settings/business');
@@ -165,17 +165,18 @@ class SettingsController extends BaseController {
         $pageDesc = 'Configure PAN, VAT, and tax rates.';
         $module = 'settings';
         $activeTab = 'tax';
+        $bid = $this->businessId();
 
-        $tax_name = $this->bs->get('tax_name', 'VAT');
-        $tax_rate = $this->bs->get('tax_rate', '13');
-        $pan_format = $this->bs->get('pan_format', 'XXXXXXXXX');
-        $vat_format = $this->bs->get('vat_format', 'XXXXXXXXX');
+        $tax_name = $this->bs->get('tax_name', $bid, 'VAT');
+        $tax_rate = $this->bs->get('tax_rate', $bid, '13');
+        $pan_format = $this->bs->get('pan_format', $bid, 'XXXXXXXXX');
+        $vat_format = $this->bs->get('vat_format', $bid, 'XXXXXXXXX');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->bs->set('tax_name', trim($_POST['tax_name'] ?? 'VAT'));
-            $this->bs->set('tax_rate', trim($_POST['tax_rate'] ?? '13'));
-            $this->bs->set('pan_format', trim($_POST['pan_format'] ?? 'XXXXXXXXX'));
-            $this->bs->set('vat_format', trim($_POST['vat_format'] ?? 'XXXXXXXXX'));
+            $this->bs->set('tax_name', trim($_POST['tax_name'] ?? 'VAT'), $bid);
+            $this->bs->set('tax_rate', trim($_POST['tax_rate'] ?? '13'), $bid);
+            $this->bs->set('pan_format', trim($_POST['pan_format'] ?? 'XXXXXXXXX'), $bid);
+            $this->bs->set('vat_format', trim($_POST['vat_format'] ?? 'XXXXXXXXX'), $bid);
             $_SESSION['success'] = 'Tax settings updated successfully.';
             redirect('/settings/tax');
         }

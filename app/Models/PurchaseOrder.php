@@ -18,13 +18,14 @@ class PurchaseOrder {
         return $s->fetchAll();
     }
 
-    public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT * FROM purchase_orders WHERE id=:id LIMIT 1");
-        $s->execute(['id'=>$id]); return $s->fetch();
+    public function find(int $id, int $bid = 0): array|false {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("SELECT * FROM purchase_orders WHERE id=:id AND business_id=:bid LIMIT 1");
+        $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
 
-    public function findWithItems(int $id): array|false {
-        $order = $this->find($id);
+    public function findWithItems(int $id, int $bid = 0): array|false {
+        $order = $this->find($id, $bid);
         if (!$order) return false;
         $s = $this->db->prepare("SELECT * FROM purchase_order_items WHERE purchase_order_id=:oid");
         $s->execute(['oid'=>$id]);
@@ -50,27 +51,19 @@ class PurchaseOrder {
         return (int)$this->db->lastInsertId();
     }
 
-    public function update(int $id, array $d): bool {
-        $s = $this->db->prepare("UPDATE purchase_orders SET supplier_id=:sid,order_number=:on,order_date=:od,expected_delivery=:ed,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:tot,status=:st,notes=:notes WHERE id=:id");
+    public function update(int $id, array $d, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("UPDATE purchase_orders SET supplier_id=:sid,order_number=:on,order_date=:od,expected_delivery=:ed,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:tot,status=:st,notes=:notes WHERE id=:id AND business_id=:bid");
         return $s->execute([
-            'sid'=>$d['supplier_id'],
-            'on'=>$d['order_number'],
-            'od'=>$d['order_date'],
-            'ed'=>$d['expected_delivery']??null,
-            'sub'=>$d['subtotal']??0,
-            'tax'=>$d['tax_amount']??0,
-            'disc'=>$d['discount_amount']??0,
-            'tot'=>$d['total_amount']??0,
-            'st'=>$d['status']??'draft',
-            'notes'=>$d['notes']??null,
-            'id'=>$id
+            'sid'=>$d['supplier_id'],'on'=>$d['order_number'],'od'=>$d['order_date'],'ed'=>$d['expected_delivery']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'tot'=>$d['total_amount']??0,'st'=>$d['status']??'draft','notes'=>$d['notes']??null,'id'=>$id,'bid'=>$bid
         ]);
     }
 
-    public function delete(int $id): bool {
+    public function delete(int $id, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
         $this->db->prepare("DELETE FROM purchase_order_items WHERE purchase_order_id=:id")->execute(['id'=>$id]);
-        $s = $this->db->prepare("DELETE FROM purchase_orders WHERE id=:id");
-        return $s->execute(['id'=>$id]);
+        $s = $this->db->prepare("DELETE FROM purchase_orders WHERE id=:id AND business_id=:bid");
+        return $s->execute(['id'=>$id,'bid'=>$bid]);
     }
 
     public function nextNumber(int $bid = 0): string {

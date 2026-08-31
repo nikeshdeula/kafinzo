@@ -3,11 +3,12 @@
 if (!function_exists('tax_settings')) {
     function tax_settings(): array {
         $bs = new \App\Models\BusinessSetting();
+        $bid = $_SESSION['business_id'] ?? 0;
         return [
-            'name' => $bs->get('tax_name', 'VAT'),
-            'rate' => (float)($bs->get('tax_rate', '13')),
-            'pan_format' => $bs->get('pan_format', 'XXXXXXXXX'),
-            'vat_format' => $bs->get('vat_format', 'XXXXXXXXX'),
+            'name' => $bs->get('tax_name', $bid, 'VAT'),
+            'rate' => (float)($bs->get('tax_rate', $bid, '13')),
+            'pan_format' => $bs->get('pan_format', $bid, 'XXXXXXXXX'),
+            'vat_format' => $bs->get('vat_format', $bid, 'XXXXXXXXX'),
         ];
     }
 }

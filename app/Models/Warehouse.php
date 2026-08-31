@@ -13,10 +13,10 @@ class Warehouse {
         return $s->fetchAll();
     }
 
-    public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT * FROM warehouses WHERE id=:id LIMIT 1");
-        $s->execute(['id' => $id]);
-        return $s->fetch();
+    public function find(int $id, int $bid = 0): array|false {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("SELECT * FROM warehouses WHERE id=:id AND business_id=:bid LIMIT 1");
+        $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
 
     public function create(array $d): int {
@@ -30,19 +30,16 @@ class Warehouse {
         return (int)$this->db->lastInsertId();
     }
 
-    public function update(array $d): bool {
-        $s = $this->db->prepare("UPDATE warehouses SET name=:name, location=:loc, is_default=:def WHERE id=:id");
-        return $s->execute([
-            'name' => $d['name'],
-            'loc'  => $d['location'] ?? null,
-            'def'  => !empty($d['is_default']) ? 1 : 0,
-            'id'   => $d['id'],
-        ]);
+    public function update(array $d, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("UPDATE warehouses SET name=:name, location=:loc, is_default=:def WHERE id=:id AND business_id=:bid");
+        return $s->execute(['name'=>$d['name'],'loc'=>$d['location']??null,'def'=>!empty($d['is_default']) ? 1 : 0,'id'=>$d['id'],'bid'=>$bid]);
     }
 
-    public function delete(int $id): bool {
-        $s = $this->db->prepare("DELETE FROM warehouses WHERE id=:id");
-        return $s->execute(['id' => $id]);
+    public function delete(int $id, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("DELETE FROM warehouses WHERE id=:id AND business_id=:bid");
+        return $s->execute(['id'=>$id,'bid'=>$bid]);
     }
 
     public function defaultWarehouse(int $bid = 0): array|false {

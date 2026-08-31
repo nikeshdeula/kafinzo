@@ -12,9 +12,10 @@ class Quotation {
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
 
-    public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT q.*,c.name AS customer_name,c.address AS customer_address,c.branch AS customer_branch FROM quotations q LEFT JOIN customers c ON q.customer_id=c.id WHERE q.id=:id LIMIT 1");
-        $s->execute(['id'=>$id]); return $s->fetch();
+    public function find(int $id, int $bid = 0): array|false {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("SELECT q.*,c.name AS customer_name,c.address AS customer_address,c.branch AS customer_branch FROM quotations q LEFT JOIN customers c ON q.customer_id=c.id WHERE q.id=:id AND q.business_id=:bid LIMIT 1");
+        $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
 
     public function items(int $quotationId): array {
@@ -28,15 +29,17 @@ class Quotation {
         return (int)$this->db->lastInsertId();
     }
 
-    public function update(int $id, array $d): bool {
-        $s = $this->db->prepare("UPDATE quotations SET customer_id=:cid,quotation_number=:num,quotation_date=:qdate,valid_until=:valid,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:total,status=:status,notes=:notes WHERE id=:id");
-        return $s->execute(['cid'=>$d['customer_id'],'num'=>$d['quotation_number'],'qdate'=>$d['quotation_date'],'valid'=>$d['valid_until']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'total'=>$d['total_amount']??0,'status'=>$d['status'],'notes'=>$d['notes']??null,'id'=>$id]);
+    public function update(int $id, array $d, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        $s = $this->db->prepare("UPDATE quotations SET customer_id=:cid,quotation_number=:num,quotation_date=:qdate,valid_until=:valid,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:total,status=:status,notes=:notes WHERE id=:id AND business_id=:bid");
+        return $s->execute(['cid'=>$d['customer_id'],'num'=>$d['quotation_number'],'qdate'=>$d['quotation_date'],'valid'=>$d['valid_until']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'total'=>$d['total_amount']??0,'status'=>$d['status'],'notes'=>$d['notes']??null,'id'=>$id,'bid'=>$bid]);
     }
 
-    public function delete(int $id): bool {
+    public function delete(int $id, int $bid = 0): bool {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
         $this->db->prepare("DELETE FROM quotation_items WHERE quotation_id=:id")->execute(['id'=>$id]);
-        $s = $this->db->prepare("DELETE FROM quotations WHERE id=:id");
-        return $s->execute(['id'=>$id]);
+        $s = $this->db->prepare("DELETE FROM quotations WHERE id=:id AND business_id=:bid");
+        return $s->execute(['id'=>$id,'bid'=>$bid]);
     }
 
     public function nextNumber(int $bid = 0): string {
