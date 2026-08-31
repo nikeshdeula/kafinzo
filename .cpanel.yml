@@ -1,4 +1,6 @@
 ---
 deployment:
   tasks:
-    - /bin/cp -R * /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/
+    - /bin/cp -a * /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/
+    - /bin/cp -a .htaccess /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/ 2>/dev/null; true
+    - /bin/cp -a .env /home/anamolfa/public_html/kafinzo.anamolfacilitycleaners.com/ 2>/dev/null; true
