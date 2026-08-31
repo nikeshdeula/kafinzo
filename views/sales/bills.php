@@ -4,6 +4,9 @@
     <div>
         <h4><i class="bi bi-receipt text-primary me-2"></i>Sales Bill</h4>
         <p>Record and manage sales bills for customers.</p>
+        <?php if (!empty($business['address'])): ?>
+        <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($business['name'] ?? '') ?>, <?= htmlspecialchars($business['address']) ?></p>
+        <?php endif; ?>
     </div>
     <a href="/sales/bills/create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Bill</a>
 </div>
@@ -18,7 +21,7 @@
                 <select name="customer_id" class="form-select form-select-sm">
                     <option value="">All Customers</option>
                     <?php foreach ($customers as $c): ?>
-                    <option value="<?= $c['id'] ?>" <?= ($customer_id ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                    <option value="<?= $c['id'] ?>" <?= ($customer_id ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?><?= !empty($c['branch']) ? ' — ' . htmlspecialchars($c['branch']) : '' ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -55,7 +58,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Bill #</th><th>Date</th><th>Customer</th><th class="text-end">Total</th>
+                <th>Bill #</th><th>Date</th><th>Customer</th><th>Branch</th><th>Address</th><th class="text-end">Total</th>
                 <th class="text-end">TDS (1.5%)</th><th class="text-end">Grand Total</th>
                 <th class="text-end">Paid</th><th class="text-end">Balance</th><th>Status</th><th style="width:110px">Actions</th>
             </tr></thead>
@@ -79,6 +82,8 @@
                 <td class="fw-600"><?= htmlspecialchars($b['bill_number']) ?></td>
                 <td><?= nepali_date('d M Y', $b['bill_date']) ?></td>
                 <td><?= htmlspecialchars($b['customer_name'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($b['customer_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($b['customer_address'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($b['total_amount'], 2) ?></td>
                 <td class="text-end text-danger">NPR <?= number_format($tds, 2) ?></td>
                 <td class="text-end fw-600 text-success">NPR <?= number_format($grandTotal, 2) ?></td>

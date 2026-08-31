@@ -10,7 +10,7 @@ class PurchaseStatement {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $rows = [];
 
-        $sql = "SELECT pb.id, pb.bill_number AS ref_number, pb.bill_date AS date, s.name AS party_name, pb.subtotal, pb.tax_amount, pb.discount_amount, pb.total_amount, pb.paid_amount, pb.status, 'bill' AS type FROM purchase_bills pb LEFT JOIN suppliers s ON pb.supplier_id=s.id WHERE pb.business_id=:bid";
+        $sql = "SELECT pb.id, pb.bill_number AS ref_number, pb.bill_date AS date, s.name AS party_name, s.address AS party_address, s.branch AS party_branch, pb.subtotal, pb.tax_amount, pb.discount_amount, pb.total_amount, pb.paid_amount, pb.status, 'bill' AS type FROM purchase_bills pb LEFT JOIN suppliers s ON pb.supplier_id=s.id WHERE pb.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($from) { $sql .= " AND pb.bill_date >= :from"; $params['from'] = $from; }
         if ($to) { $sql .= " AND pb.bill_date <= :to"; $params['to'] = $to; }
@@ -19,7 +19,7 @@ class PurchaseStatement {
         $stmt->execute($params);
         $rows = array_merge($rows, $stmt->fetchAll());
 
-        $sql = "SELECT pp.id, pp.payment_number AS ref_number, pp.payment_date AS date, s.name AS party_name, 0 AS subtotal, 0 AS tax_amount, 0 AS discount_amount, pp.amount AS total_amount, pp.amount AS paid_amount, 'completed' AS status, 'payment' AS type FROM purchase_payments pp LEFT JOIN suppliers s ON pp.supplier_id=s.id WHERE pp.business_id=:bid";
+        $sql = "SELECT pp.id, pp.payment_number AS ref_number, pp.payment_date AS date, s.name AS party_name, s.address AS party_address, s.branch AS party_branch, 0 AS subtotal, 0 AS tax_amount, 0 AS discount_amount, pp.amount AS total_amount, pp.amount AS paid_amount, 'completed' AS status, 'payment' AS type FROM purchase_payments pp LEFT JOIN suppliers s ON pp.supplier_id=s.id WHERE pp.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($from) { $sql .= " AND pp.payment_date >= :from"; $params['from'] = $from; }
         if ($to) { $sql .= " AND pp.payment_date <= :to"; $params['to'] = $to; }
@@ -56,7 +56,7 @@ class PurchaseStatement {
 
     public function suppliers(int $bid = 0): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $s = $this->db->prepare("SELECT id, name FROM suppliers WHERE business_id=:bid AND status='active' ORDER BY name");
+        $s = $this->db->prepare("SELECT id, name, branch FROM suppliers WHERE business_id=:bid AND status='active' ORDER BY name");
         $s->execute(['bid'=>$bid]);
         return $s->fetchAll();
     }

@@ -49,12 +49,13 @@
         </div>
         <div class="col-md-4">
             <label class="form-label fw-600">Customer <span class="text-danger">*</span></label>
-            <select name="customer_id" class="form-select" required>
+            <select name="customer_id" class="form-select" required id="customerSelect">
                 <option value="">— Select Customer —</option>
                 <?php foreach ($customers as $c): ?>
-                <option value="<?= $c['id'] ?>" <?= (isset($quotation) && $quotation['customer_id']==$c['id']) ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                <option value="<?= $c['id'] ?>" data-address="<?= htmlspecialchars($c['address'] ?? '') ?>" data-company="<?= htmlspecialchars($c['company_name'] ?? '') ?>" data-phone="<?= htmlspecialchars($c['phone'] ?? '') ?>" data-email="<?= htmlspecialchars($c['email'] ?? '') ?>" data-branch="<?= htmlspecialchars($c['branch'] ?? '') ?>" <?= (isset($quotation) && $quotation['customer_id']==$c['id']) ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?><?= !empty($c['branch']) ? ' — ' . htmlspecialchars($c['branch']) : '' ?></option>
                 <?php endforeach; ?>
             </select>
+            <div id="customerInfo" class="mt-1 small text-muted" style="display:none;"></div>
         </div>
         <div class="col-md-4">
             <label class="form-label fw-600">Status</label>
@@ -228,6 +229,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calculateTotals();
 });
+</script>
+<script>
+function showCustomerInfo() {
+    const sel = document.getElementById('customerSelect');
+    const info = document.getElementById('customerInfo');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.value) { info.style.display = 'none'; return; }
+    const parts = [];
+    if (opt.dataset.company) parts.push(opt.dataset.company);
+    if (opt.dataset.branch) parts.push(opt.dataset.branch);
+    if (opt.dataset.address) parts.push(opt.dataset.address);
+    if (opt.dataset.phone) parts.push('Ph: ' + opt.dataset.phone);
+    if (opt.dataset.email) parts.push(opt.dataset.email);
+    if (parts.length) { info.innerHTML = '<i class="bi bi-geo-alt me-1"></i>' + parts.join(' | '); info.style.display = 'block'; } else { info.style.display = 'none'; }
+}
+document.getElementById('customerSelect').addEventListener('change', showCustomerInfo);
+showCustomerInfo();
 </script>
 
 <?php $content = ob_get_clean(); require BASE_PATH . 'views/layouts/app.php'; ?>

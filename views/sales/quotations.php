@@ -21,7 +21,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Quotation #</th><th>Customer</th><th>Date</th><th>Valid Until</th>
+                <th>Quotation #</th><th>Customer</th><th>Branch</th><th>Address</th><th>Date</th><th>Valid Until</th>
                 <th class="text-end">Total</th><th>Status</th><th style="width:220px">Actions</th>
             </tr></thead>
             <tbody>
@@ -29,6 +29,8 @@
             <tr>
                 <td class="fw-600"><?= htmlspecialchars($q['quotation_number']) ?></td>
                 <td><?= htmlspecialchars($q['customer_name']) ?></td>
+                <td><?= htmlspecialchars($q['customer_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($q['customer_address'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($q['quotation_date']) ?></td>
                 <td><?= htmlspecialchars($q['valid_until'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($q['total_amount'], 2) ?></td>

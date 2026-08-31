@@ -18,7 +18,7 @@
                 <select name="supplier_id" class="form-select form-select-sm">
                     <option value="">All Suppliers</option>
                     <?php foreach ($suppliers as $sup): ?>
-                    <option value="<?= $sup['id'] ?>" <?= ($supplier_id ?? '') == $sup['id'] ? 'selected' : '' ?>><?= htmlspecialchars($sup['name']) ?></option>
+                    <option value="<?= $sup['id'] ?>" <?= ($supplier_id ?? '') == $sup['id'] ? 'selected' : '' ?>><?= htmlspecialchars($sup['name']) ?><?= !empty($sup['branch']) ? ' — ' . htmlspecialchars($sup['branch']) : '' ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -54,7 +54,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Order #</th><th>Date</th><th>Supplier</th><th class="text-end">Total</th>
+                <th>Order #</th><th>Date</th><th>Supplier</th><th>Branch</th><th>Address</th><th class="text-end">Total</th>
                 <th>Status</th><th style="width:160px">Actions</th>
             </tr></thead>
             <tbody>
@@ -73,6 +73,8 @@
                 <td class="fw-600"><?= htmlspecialchars($o['order_number']) ?></td>
                 <td><?= nepali_date('d M Y', $o['order_date']) ?></td>
                 <td><?= htmlspecialchars($o['supplier_name'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($o['supplier_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($o['supplier_address'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($o['total_amount'], 2) ?></td>
                 <td><?= $statusBadge ?></td>
                 <td>

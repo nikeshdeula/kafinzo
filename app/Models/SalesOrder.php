@@ -8,11 +8,11 @@ class SalesOrder {
 
     public function all(int $bid = 0, ?int $customer_id = null, ?string $status = null): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $sql = "SELECT o.*, c.name AS customer_name FROM sales_orders o LEFT JOIN customers c ON o.customer_id=c.id WHERE o.business_id=:bid";
+        $sql = "SELECT o.*, c.name AS customer_name, c.address AS customer_address, c.branch AS customer_branch FROM sales_orders o LEFT JOIN customers c ON o.customer_id=c.id WHERE o.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($customer_id) { $sql .= " AND o.customer_id=:cid"; $params['cid'] = $customer_id; }
         if ($status) { $sql .= " AND o.status=:st"; $params['st'] = $status; }
-        $sql .= " ORDER BY o.order_date DESC, o.id DESC";
+        $sql .= " ORDER BY o.id ASC";
         $s = $this->db->prepare($sql);
         $s->execute($params);
         return $s->fetchAll();

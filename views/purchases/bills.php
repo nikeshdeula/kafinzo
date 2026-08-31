@@ -4,6 +4,9 @@
     <div>
         <h4><i class="bi bi-file-earmark-minus text-primary me-2"></i>Purchase Bills</h4>
         <p>Record and manage purchase bills from suppliers.</p>
+        <?php if (!empty($business['address'])): ?>
+        <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($business['name'] ?? '') ?>, <?= htmlspecialchars($business['address']) ?></p>
+        <?php endif; ?>
     </div>
     <a href="/purchases/bills/create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Bill</a>
 </div>
@@ -18,7 +21,7 @@
                 <select name="supplier_id" class="form-select form-select-sm">
                     <option value="">All Suppliers</option>
                     <?php foreach ($suppliers as $sup): ?>
-                    <option value="<?= $sup['id'] ?>" <?= ($supplier_id ?? '') == $sup['id'] ? 'selected' : '' ?>><?= htmlspecialchars($sup['name']) ?></option>
+                    <option value="<?= $sup['id'] ?>" <?= ($supplier_id ?? '') == $sup['id'] ? 'selected' : '' ?>><?= htmlspecialchars($sup['name']) ?><?= !empty($sup['branch']) ? ' — ' . htmlspecialchars($sup['branch']) : '' ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -55,7 +58,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Bill #</th><th>Date</th><th>Supplier</th><th class="text-end">Total</th>
+                <th>Bill #</th><th>Date</th><th>Supplier</th><th>Branch</th><th>Address</th><th class="text-end">Total</th>
                 <th class="text-end">Paid</th><th class="text-end">Balance</th><th>Status</th><th style="width:110px">Actions</th>
             </tr></thead>
             <tbody>
@@ -76,6 +79,8 @@
                 <td class="fw-600"><?= htmlspecialchars($b['bill_number']) ?></td>
                 <td><?= nepali_date('d M Y', $b['bill_date']) ?></td>
                 <td><?= htmlspecialchars($b['supplier_name'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($b['supplier_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($b['supplier_address'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($b['total_amount'], 2) ?></td>
                 <td class="text-end">NPR <?= number_format($b['paid_amount'], 2) ?></td>
                 <td class="text-end fw-600">NPR <?= number_format($balance, 2) ?></td>

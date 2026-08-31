@@ -25,7 +25,7 @@
                 <select name="customer_id" class="form-select form-select-sm">
                     <option value="">All Customers</option>
                     <?php foreach ($customers as $c): ?>
-                    <option value="<?= $c['id'] ?>" <?= ($customer_id ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                    <option value="<?= $c['id'] ?>" <?= ($customer_id ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?><?= !empty($c['branch']) ? ' — ' . htmlspecialchars($c['branch']) : '' ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -88,7 +88,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Date</th><th>Type</th><th>Ref #</th><th>Customer</th>
+                <th>Date</th><th>Type</th><th>Ref #</th><th>Customer</th><th>Branch</th><th>Address</th>
                 <th class="text-end">Subtotal</th><th class="text-end">Tax</th><th class="text-end">Discount</th>
                 <th class="text-end">Total</th><th class="text-end">TDS (1.5%)</th><th class="text-end">Grand Total</th><th class="text-end">Paid</th><th>Status</th>
             </tr></thead>
@@ -115,6 +115,8 @@
                 <td><?= $typeBadge ?></td>
                 <td class="fw-600"><?= htmlspecialchars($r['ref_number']) ?></td>
                 <td><?= htmlspecialchars($r['party_name'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($r['party_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($r['party_address'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($r['subtotal'], 2) ?></td>
                 <td class="text-end">NPR <?= number_format($r['tax_amount'], 2) ?></td>
                 <td class="text-end">NPR <?= number_format($r['discount_amount'], 2) ?></td>

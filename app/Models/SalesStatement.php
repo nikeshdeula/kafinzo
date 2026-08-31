@@ -10,7 +10,7 @@ class SalesStatement {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $rows = [];
 
-        $sql = "SELECT sb.id, sb.bill_number AS ref_number, sb.bill_date AS date, c.name AS party_name, sb.subtotal, sb.tax_amount, sb.discount_amount, sb.total_amount, COALESCE(sb.tds_amount, 0) AS tds_amount, sb.paid_amount, sb.status, 'bill' AS type FROM sales_bills sb LEFT JOIN customers c ON sb.customer_id=c.id WHERE sb.business_id=:bid";
+        $sql = "SELECT sb.id, sb.bill_number AS ref_number, sb.bill_date AS date, c.name AS party_name, c.address AS party_address, c.branch AS party_branch, sb.subtotal, sb.tax_amount, sb.discount_amount, sb.total_amount, COALESCE(sb.tds_amount, 0) AS tds_amount, sb.paid_amount, sb.status, 'bill' AS type FROM sales_bills sb LEFT JOIN customers c ON sb.customer_id=c.id WHERE sb.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($from) { $sql .= " AND sb.bill_date >= :from"; $params['from'] = $from; }
         if ($to) { $sql .= " AND sb.bill_date <= :to"; $params['to'] = $to; }
@@ -19,7 +19,7 @@ class SalesStatement {
         $stmt->execute($params);
         $rows = array_merge($rows, $stmt->fetchAll());
 
-        $sql = "SELECT i.id, i.invoice_number AS ref_number, i.invoice_date AS date, c.name AS party_name, i.subtotal, i.tax_amount, i.discount_amount, i.total_amount, 0 AS tds_amount, i.paid_amount, i.status, 'invoice' AS type FROM invoices i LEFT JOIN customers c ON i.customer_id=c.id WHERE i.business_id=:bid";
+        $sql = "SELECT i.id, i.invoice_number AS ref_number, i.invoice_date AS date, c.name AS party_name, c.address AS party_address, c.branch AS party_branch, i.subtotal, i.tax_amount, i.discount_amount, i.total_amount, 0 AS tds_amount, i.paid_amount, i.status, 'invoice' AS type FROM invoices i LEFT JOIN customers c ON i.customer_id=c.id WHERE i.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($from) { $sql .= " AND i.invoice_date >= :from"; $params['from'] = $from; }
         if ($to) { $sql .= " AND i.invoice_date <= :to"; $params['to'] = $to; }
@@ -28,7 +28,7 @@ class SalesStatement {
         $stmt->execute($params);
         $rows = array_merge($rows, $stmt->fetchAll());
 
-        $sql = "SELECT sp.id, sp.reference_number AS ref_number, sp.payment_date AS date, c.name AS party_name, 0 AS subtotal, 0 AS tax_amount, 0 AS discount_amount, sp.amount AS total_amount, 0 AS tds_amount, sp.amount AS paid_amount, 'completed' AS status, 'payment' AS type FROM sales_payments sp LEFT JOIN customers c ON sp.customer_id=c.id WHERE sp.business_id=:bid";
+        $sql = "SELECT sp.id, sp.reference_number AS ref_number, sp.payment_date AS date, c.name AS party_name, c.address AS party_address, c.branch AS party_branch, 0 AS subtotal, 0 AS tax_amount, 0 AS discount_amount, sp.amount AS total_amount, 0 AS tds_amount, sp.amount AS paid_amount, 'completed' AS status, 'payment' AS type FROM sales_payments sp LEFT JOIN customers c ON sp.customer_id=c.id WHERE sp.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($from) { $sql .= " AND sp.payment_date >= :from"; $params['from'] = $from; }
         if ($to) { $sql .= " AND sp.payment_date <= :to"; $params['to'] = $to; }
@@ -68,7 +68,7 @@ class SalesStatement {
 
     public function customers(int $bid = 0): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $s = $this->db->prepare("SELECT id, name FROM customers WHERE business_id=:bid AND status='active' ORDER BY name");
+        $s = $this->db->prepare("SELECT id, name, branch FROM customers WHERE business_id=:bid AND status='active' ORDER BY name");
         $s->execute(['bid'=>$bid]);
         return $s->fetchAll();
     }

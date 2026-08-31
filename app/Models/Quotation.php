@@ -8,12 +8,12 @@ class Quotation {
 
     public function all(int $bid = 0): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $s = $this->db->prepare("SELECT q.*,c.name AS customer_name FROM quotations q LEFT JOIN customers c ON q.customer_id=c.id WHERE q.business_id=:bid ORDER BY q.quotation_date DESC, q.id DESC");
+        $s = $this->db->prepare("SELECT q.*,c.name AS customer_name,c.address AS customer_address,c.branch AS customer_branch FROM quotations q LEFT JOIN customers c ON q.customer_id=c.id WHERE q.business_id=:bid ORDER BY q.id ASC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
 
     public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT q.*,c.name AS customer_name FROM quotations q LEFT JOIN customers c ON q.customer_id=c.id WHERE q.id=:id LIMIT 1");
+        $s = $this->db->prepare("SELECT q.*,c.name AS customer_name,c.address AS customer_address,c.branch AS customer_branch FROM quotations q LEFT JOIN customers c ON q.customer_id=c.id WHERE q.id=:id LIMIT 1");
         $s->execute(['id'=>$id]); return $s->fetch();
     }
 

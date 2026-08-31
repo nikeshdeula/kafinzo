@@ -21,7 +21,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Invoice #</th><th>Customer</th><th>Date</th><th>Due Date</th>
+                <th>Invoice #</th><th>Customer</th><th>Branch</th><th>Address</th><th>Date</th><th>Due Date</th>
                 <th class="text-end">Total</th><th class="text-end">Paid</th>
                 <th>Status</th><th style="width:180px">Actions</th>
             </tr></thead>
@@ -30,6 +30,8 @@
             <tr>
                 <td class="fw-600"><?= htmlspecialchars($inv['invoice_number']) ?></td>
                 <td><?= htmlspecialchars($inv['customer_name']) ?></td>
+                <td><?= htmlspecialchars($inv['customer_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($inv['customer_address'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($inv['invoice_date']) ?></td>
                 <td><?= htmlspecialchars($inv['due_date'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($inv['total_amount'], 2) ?></td>

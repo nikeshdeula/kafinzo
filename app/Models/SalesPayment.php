@@ -8,12 +8,12 @@ class SalesPayment {
 
     public function all(int $bid = 0): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $s = $this->db->prepare("SELECT sp.*,c.name AS customer_name,i.invoice_number FROM sales_payments sp LEFT JOIN customers c ON sp.customer_id=c.id LEFT JOIN invoices i ON sp.invoice_id=i.id WHERE sp.business_id=:bid ORDER BY sp.payment_date DESC, sp.id DESC");
+        $s = $this->db->prepare("SELECT sp.*,c.name AS customer_name,c.address AS customer_address,c.branch AS customer_branch,i.invoice_number FROM sales_payments sp LEFT JOIN customers c ON sp.customer_id=c.id LEFT JOIN invoices i ON sp.invoice_id=i.id WHERE sp.business_id=:bid ORDER BY sp.id ASC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
 
     public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT sp.*,c.name AS customer_name,i.invoice_number FROM sales_payments sp LEFT JOIN customers c ON sp.customer_id=c.id LEFT JOIN invoices i ON sp.invoice_id=i.id WHERE sp.id=:id LIMIT 1");
+        $s = $this->db->prepare("SELECT sp.*,c.name AS customer_name,c.address AS customer_address,c.branch AS customer_branch,i.invoice_number FROM sales_payments sp LEFT JOIN customers c ON sp.customer_id=c.id LEFT JOIN invoices i ON sp.invoice_id=i.id WHERE sp.id=:id LIMIT 1");
         $s->execute(['id'=>$id]); return $s->fetch();
     }
 

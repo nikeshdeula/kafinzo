@@ -18,6 +18,8 @@
             <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($supplier['name'] ?? '') ?>"></div>
         <div class="col-md-6"><label class="form-label fw-600">Company Name</label>
             <input type="text" name="company_name" class="form-control" value="<?= htmlspecialchars($supplier['company_name'] ?? '') ?>"></div>
+        <div class="col-md-6"><label class="form-label fw-600">Branch</label>
+            <input type="text" name="branch" class="form-control" placeholder="e.g. Main Branch, New Baneshwor" value="<?= htmlspecialchars($supplier['branch'] ?? '') ?>"></div>
         <div class="col-md-6"><label class="form-label fw-600">PAN Number</label>
             <input type="text" name="pan" class="form-control" value="<?= htmlspecialchars($supplier['pan'] ?? '') ?>"></div>
         <div class="col-md-6"><label class="form-label fw-600">VAT Number</label>

@@ -21,7 +21,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Name</th><th>Company</th><th>PAN</th><th>Phone</th><th>Email</th>
+                <th>Name</th><th>Company</th><th>Branch</th><th>Address</th><th>PAN</th><th>Phone</th><th>Email</th>
                 <th class="text-end">Opening Bal.</th><th>Status</th><th style="width:100px">Actions</th>
             </tr></thead>
             <tbody>
@@ -29,6 +29,8 @@
             <tr>
                 <td class="fw-600"><?= htmlspecialchars($s['name']) ?></td>
                 <td><?= htmlspecialchars($s['company_name'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($s['branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($s['address'] ?? '—') ?></td>
                 <td><code><?= htmlspecialchars($s['pan'] ?? '—') ?></code></td>
                 <td><?= htmlspecialchars($s['phone'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($s['email'] ?? '—') ?></td>

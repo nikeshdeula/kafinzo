@@ -207,6 +207,9 @@
     <div>
         <h4><i class="bi bi-receipt text-primary me-2"></i><?= htmlspecialchars($title) ?></h4>
         <p class="text-muted"><?= isset($bill) ? 'Update sales bill details.' : 'Record a new sales bill for a customer.' ?></p>
+        <?php if (!empty($business['address'])): ?>
+        <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($business['name'] ?? '') ?>, <?= htmlspecialchars($business['address']) ?></p>
+        <?php endif; ?>
     </div>
     <a href="/sales/bills" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i> Back</a>
 </div>
@@ -229,12 +232,13 @@
                     <span>Customer <span class="text-danger">*</span></span>
                     <button type="button" class="quick-create quick-create-btn" data-create-url="/sales/customers/create" data-create-title="New Customer" data-bs-toggle="modal" data-bs-target="#quickCreateModal"><i class="bi bi-plus-circle"></i> New</button>
                 </label>
-                <select name="customer_id" class="form-select" required>
+                <select name="customer_id" class="form-select" required id="customerSelect">
                     <option value="">— Select —</option>
                     <?php foreach ($customers as $c): ?>
-                    <option value="<?= $c['id'] ?>" <?= (isset($bill) && $bill['customer_id'] == $c['id']) ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                    <option value="<?= $c['id'] ?>" data-address="<?= htmlspecialchars($c['address'] ?? '') ?>" data-company="<?= htmlspecialchars($c['company_name'] ?? '') ?>" data-phone="<?= htmlspecialchars($c['phone'] ?? '') ?>" data-email="<?= htmlspecialchars($c['email'] ?? '') ?>" data-branch="<?= htmlspecialchars($c['branch'] ?? '') ?>" <?= (isset($bill) && $bill['customer_id'] == $c['id']) ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?><?= !empty($c['branch']) ? ' — ' . htmlspecialchars($c['branch']) : '' ?></option>
                     <?php endforeach; ?>
                 </select>
+                <div id="customerInfo" class="mt-1 small text-muted" style="display:none;"></div>
             </div>
             <div class="form-group-vertical">
                 <label class="form-label">Bill Date <span class="text-danger">*</span></label>
@@ -371,19 +375,37 @@
             <div class="modal-body">
                 <div class="alert alert-danger modal-error" id="quickCreateError"></div>
                 <form id="quickCustomerForm" class="quick-create-form" data-endpoint="/sales/customers/create?modal=1">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Customer Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Customer Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Company Name</label>
+                            <input type="text" name="company_name" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Branch</label>
+                            <input type="text" name="branch" class="form-control" placeholder="e.g. Main Branch">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">PAN Number</label>
+                            <input type="text" name="pan" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phone</label>
+                            <input type="text" name="phone" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" name="email" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Address</label>
+                            <input type="text" name="address" class="form-control">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Company Name</label>
-                        <input type="text" name="company_name" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Phone</label>
-                        <input type="text" name="phone" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-save me-1"></i> Save Customer</button>
+                    <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-save me-1"></i> Save Customer</button>
                 </form>
                 <form id="quickProductForm" class="quick-create-form" style="display:none" data-endpoint="/inventory/products/create?modal=1">
                     <div class="mb-3">
@@ -520,6 +542,29 @@ document.querySelectorAll('.item-qty, .item-price, .item-discount, .item-tax').f
     el.addEventListener('input', calculateTotals);
 });
 calculateTotals();
+</script>
+
+<script>
+function showCustomerInfo() {
+    const sel = document.getElementById('customerSelect');
+    const info = document.getElementById('customerInfo');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.value) { info.style.display = 'none'; return; }
+    const parts = [];
+    if (opt.dataset.company) parts.push(opt.dataset.company);
+    if (opt.dataset.branch) parts.push(opt.dataset.branch);
+    if (opt.dataset.address) parts.push(opt.dataset.address);
+    if (opt.dataset.phone) parts.push('Ph: ' + opt.dataset.phone);
+    if (opt.dataset.email) parts.push(opt.dataset.email);
+    if (parts.length) {
+        info.innerHTML = '<i class="bi bi-geo-alt me-1"></i>' + parts.join(' | ');
+        info.style.display = 'block';
+    } else {
+        info.style.display = 'none';
+    }
+}
+document.getElementById('customerSelect').addEventListener('change', showCustomerInfo);
+showCustomerInfo();
 </script>
 
 <?php $content = ob_get_clean(); require BASE_PATH . 'views/layouts/app.php'; ?>

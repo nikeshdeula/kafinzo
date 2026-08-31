@@ -24,8 +24,9 @@ class SalesBillController extends BaseController {
         $status = $_GET['status'] ?? null;
         $bills = $this->model->all($this->businessId(), $customer_id, $status);
         $customers = $this->customerModel->all();
+        $business = $this->businessInfo();
         $title = 'Sales Bills';
-        return view('sales/bills', compact('bills', 'customers', 'customer_id', 'status', 'title'));
+        return view('sales/bills', compact('bills', 'customers', 'customer_id', 'status', 'title', 'business'));
     }
 
     public function create() {
@@ -105,7 +106,8 @@ class SalesBillController extends BaseController {
         $customers = $this->customerModel->all();
         $products = $this->productModel->all();
         $taxRate = \tax_rate();
-        return view('sales/bill_form', compact('title', 'bill_number', 'customers', 'products', 'taxRate'));
+        $business = $this->businessInfo();
+        return view('sales/bill_form', compact('title', 'bill_number', 'customers', 'products', 'taxRate', 'business'));
     }
 
     public function edit() {
@@ -187,7 +189,8 @@ class SalesBillController extends BaseController {
         $customers = $this->customerModel->all();
         $products = $this->productModel->all();
         $taxRate = \tax_rate();
-        return view('sales/bill_form', compact('title', 'bill', 'customers', 'products', 'taxRate'));
+        $business = $this->businessInfo();
+        return view('sales/bill_form', compact('title', 'bill', 'customers', 'products', 'taxRate', 'business'));
     }
 
     public function delete() {

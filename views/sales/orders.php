@@ -18,7 +18,7 @@
                 <select name="customer_id" class="form-select form-select-sm">
                     <option value="">All Customers</option>
                     <?php foreach ($customers as $c): ?>
-                    <option value="<?= $c['id'] ?>" <?= ($customer_id ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                    <option value="<?= $c['id'] ?>" <?= ($customer_id ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?><?= !empty($c['branch']) ? ' — ' . htmlspecialchars($c['branch']) : '' ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -55,7 +55,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Order #</th><th>Date</th><th>Customer</th><th class="text-end">Total</th>
+                <th>Order #</th><th>Date</th><th>Customer</th><th>Branch</th><th>Address</th><th class="text-end">Total</th>
                 <th>Status</th><th style="width:110px">Actions</th>
             </tr></thead>
             <tbody>
@@ -75,6 +75,8 @@
                 <td class="fw-600"><?= htmlspecialchars($o['order_number']) ?></td>
                 <td><?= nepali_date('d M Y', $o['order_date']) ?></td>
                 <td><?= htmlspecialchars($o['customer_name'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($o['customer_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($o['customer_address'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($o['total_amount'], 2) ?></td>
                 <td><?= $statusBadge ?></td>
                 <td>

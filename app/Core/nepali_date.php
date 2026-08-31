@@ -265,13 +265,21 @@ if (!function_exists('nepali_date_picker')) {
             $jsMonthsData[] = 'window.npMonthsData[' . $y . '] = {' . implode(',', $months) . '}';
         }
         $jsMonthsDataStr = implode(";\n                    ", $jsMonthsData);
-        return '<div class="input-group" style="position:relative;">
+        return '<div class="input-group nepali-date-picker" style="position:relative;">
                     <input type="text" class="form-control" id="' . $uniqueId . '" value="' . htmlspecialchars($nepaliValue) . '" placeholder="' . $placeholder . '"' . $readonlyAttr . ' onfocus="npOpenCalendar(\'' . $uniqueId . '\')" onchange="npSyncHidden(this, \'' . $name . '\')">
-                    <span class="input-group-text" style="font-size:0.85rem;min-width:120px;">BS</span>
-                    <button type="button" class="btn btn-outline-secondary" onclick="npOpenCalendar(\'' . $uniqueId . '\')"><i class="bi bi-calendar3"></i></button>
+                    <span class="input-group-text" style="font-size:0.75rem;padding:4px 10px;color:#6c757d;font-weight:600;letter-spacing:0.5px;">BS</span>
+                    <button type="button" class="btn btn-outline-secondary" style="padding:4px 10px;" onclick="npOpenCalendar(\'' . $uniqueId . '\')"><i class="bi bi-calendar3"></i></button>
                     <input type="hidden" name="' . htmlspecialchars($name) . '" id="' . $uniqueId . '_hidden" value="' . htmlspecialchars($currentAd) . '">
                     ' . $calendarHtml . '
                 </div>
+                <style>
+                .nepali-date-picker .form-control {{ border-right: 0; }}
+                .nepali-date-picker .input-group-text {{ border-left: 0; border-right: 0; background: #f8f9fa; }}
+                .nepali-date-picker .btn-outline-secondary {{ border-left: 0; }}
+                .nepali-date-picker .form-control:focus {{ box-shadow: none; border-color: #dee2e6; }}
+                .nepali-date-picker .form-control:focus + .input-group-text {{ border-color: #86b7fe; }}
+                .nepali-date-picker .form-control:focus + .input-group-text + .btn {{ border-color: #86b7fe; }}
+                </style>
                 <script>
                 if (!window.npMonthsData) {
                     window.npMonthsData = {};

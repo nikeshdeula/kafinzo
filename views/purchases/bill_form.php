@@ -217,6 +217,9 @@
     <div>
         <h4><i class="bi bi-file-earmark-minus text-primary me-2"></i><?= htmlspecialchars($title) ?></h4>
         <p class="text-muted"><?= isset($bill) ? 'Update purchase bill details.' : 'Record a new purchase bill from a supplier.' ?></p>
+        <?php if (!empty($business['address'])): ?>
+        <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($business['name'] ?? '') ?>, <?= htmlspecialchars($business['address']) ?></p>
+        <?php endif; ?>
     </div>
     <a href="/purchases/bills" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i> Back</a>
 </div>
@@ -241,12 +244,13 @@
                     <span>Supplier <span class="text-danger">*</span></span>
                     <button type="button" class="quick-create quick-create-btn" data-create-url="/purchases/suppliers/create" data-create-title="New Supplier" data-bs-toggle="modal" data-bs-target="#quickCreateModal"><i class="bi bi-plus-circle"></i> New</button>
                 </label>
-                <select name="supplier_id" class="form-select" required>
+                <select name="supplier_id" class="form-select" required id="supplierSelect">
                     <option value="">— Select —</option>
                     <?php foreach ($suppliers as $sup): ?>
-                    <option value="<?= $sup['id'] ?>" <?= (isset($bill) && $bill['supplier_id'] == $sup['id']) ? 'selected' : '' ?>><?= htmlspecialchars($sup['name']) ?></option>
+                    <option value="<?= $sup['id'] ?>" data-address="<?= htmlspecialchars($sup['address'] ?? '') ?>" data-company="<?= htmlspecialchars($sup['company_name'] ?? '') ?>" data-phone="<?= htmlspecialchars($sup['phone'] ?? '') ?>" data-email="<?= htmlspecialchars($sup['email'] ?? '') ?>" data-branch="<?= htmlspecialchars($sup['branch'] ?? '') ?>" <?= (isset($bill) && $bill['supplier_id'] == $sup['id']) ? 'selected' : '' ?>><?= htmlspecialchars($sup['name']) ?><?= !empty($sup['branch']) ? ' — ' . htmlspecialchars($sup['branch']) : '' ?></option>
                     <?php endforeach; ?>
                 </select>
+                <div id="supplierInfo" class="mt-1 small text-muted" style="display:none;"></div>
             </div>
             <div class="form-group-vertical">
                 <label class="form-label">Bill Date <span class="text-danger">*</span></label>
@@ -375,19 +379,37 @@
             <div class="modal-body">
                 <div class="alert alert-danger modal-error" id="quickCreateError"></div>
                 <form id="quickSupplierForm" class="quick-create-form" data-endpoint="/purchases/suppliers/create?modal=1">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Supplier Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Supplier Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Company Name</label>
+                            <input type="text" name="company_name" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Branch</label>
+                            <input type="text" name="branch" class="form-control" placeholder="e.g. Main Branch">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">PAN Number</label>
+                            <input type="text" name="pan" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phone</label>
+                            <input type="text" name="phone" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" name="email" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Address</label>
+                            <input type="text" name="address" class="form-control">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Company Name</label>
-                        <input type="text" name="company_name" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Phone</label>
-                        <input type="text" name="phone" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-save me-1"></i> Save Supplier</button>
+                    <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-save me-1"></i> Save Supplier</button>
                 </form>
                 <form id="quickProductForm" class="quick-create-form d-none" data-endpoint="/inventory/products/create?modal=1">
                     <div class="mb-3">
@@ -510,6 +532,29 @@ document.querySelectorAll('.item-qty, .item-price, .item-discount, .item-tax').f
     el.addEventListener('input', calculateTotals);
 });
 calculateTotals();
+</script>
+
+<script>
+function showSupplierInfo() {
+    const sel = document.getElementById('supplierSelect');
+    const info = document.getElementById('supplierInfo');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.value) { info.style.display = 'none'; return; }
+    const parts = [];
+    if (opt.dataset.company) parts.push(opt.dataset.company);
+    if (opt.dataset.branch) parts.push(opt.dataset.branch);
+    if (opt.dataset.address) parts.push(opt.dataset.address);
+    if (opt.dataset.phone) parts.push('Ph: ' + opt.dataset.phone);
+    if (opt.dataset.email) parts.push(opt.dataset.email);
+    if (parts.length) {
+        info.innerHTML = '<i class="bi bi-geo-alt me-1"></i>' + parts.join(' | ');
+        info.style.display = 'block';
+    } else {
+        info.style.display = 'none';
+    }
+}
+document.getElementById('supplierSelect').addEventListener('change', showSupplierInfo);
+showSupplierInfo();
 </script>
 
 <?php $content = ob_get_clean(); require BASE_PATH . 'views/layouts/app.php'; ?>

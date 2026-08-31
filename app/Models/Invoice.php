@@ -8,12 +8,12 @@ class Invoice {
 
     public function all(int $bid = 0): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $s = $this->db->prepare("SELECT i.*,c.name AS customer_name FROM invoices i LEFT JOIN customers c ON i.customer_id=c.id WHERE i.business_id=:bid ORDER BY i.invoice_date DESC, i.id DESC");
+        $s = $this->db->prepare("SELECT i.*,c.name AS customer_name,c.address AS customer_address,c.branch AS customer_branch FROM invoices i LEFT JOIN customers c ON i.customer_id=c.id WHERE i.business_id=:bid ORDER BY i.id ASC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
 
     public function find(int $id): array|false {
-        $s = $this->db->prepare("SELECT i.*,c.name AS customer_name FROM invoices i LEFT JOIN customers c ON i.customer_id=c.id WHERE i.id=:id LIMIT 1");
+        $s = $this->db->prepare("SELECT i.*,c.name AS customer_name,c.address AS customer_address,c.branch AS customer_branch FROM invoices i LEFT JOIN customers c ON i.customer_id=c.id WHERE i.id=:id LIMIT 1");
         $s->execute(['id'=>$id]); return $s->fetch();
     }
 

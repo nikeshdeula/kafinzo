@@ -39,7 +39,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Payment #</th><th>Date</th><th>Supplier</th><th>Bill / Order</th>
+                <th>Payment #</th><th>Date</th><th>Supplier</th><th>Branch</th><th>Address</th><th>Bill / Order</th>
                 <th class="text-end">Amount</th><th>Method</th><th>Reference</th>
             </tr></thead>
             <tbody>
@@ -48,6 +48,8 @@
                 <td class="fw-600"><?= htmlspecialchars($p['payment_number']) ?></td>
                 <td><?= nepali_date('d M Y', $p['payment_date']) ?></td>
                 <td><?= htmlspecialchars($p['supplier_name'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($p['supplier_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($p['supplier_address'] ?? '—') ?></td>
                 <td>
                     <?php if ($p['bill_id']): ?>
                         <a href="/purchases/bills/edit?id=<?= $p['bill_id'] ?>">Bill #<?= $p['bill_id'] ?></a>

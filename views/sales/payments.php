@@ -45,7 +45,7 @@ foreach ($payments as $p) { $totalReceived += $p['amount']; }
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>#</th><th>Invoice #</th><th>Customer</th><th>Date</th>
+                <th>#</th><th>Invoice #</th><th>Customer</th><th>Branch</th><th>Address</th><th>Date</th>
                 <th>Method</th><th>Reference</th><th class="text-end">Amount (NPR)</th><th style="width:100px">Actions</th>
             </tr></thead>
             <tbody>
@@ -54,6 +54,8 @@ foreach ($payments as $p) { $totalReceived += $p['amount']; }
                 <td><?= $idx + 1 ?></td>
                 <td class="fw-600"><?= htmlspecialchars($p['invoice_number'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($p['customer_name']) ?></td>
+                <td><?= htmlspecialchars($p['customer_branch'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($p['customer_address'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($p['payment_date']) ?></td>
                 <td>
                     <?php

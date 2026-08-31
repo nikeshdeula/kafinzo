@@ -24,8 +24,9 @@ class PurchaseBillController extends BaseController {
         $status = $_GET['status'] ?? null;
         $bills = $this->model->all($this->businessId(), $supplier_id, $status);
         $suppliers = $this->supplierModel->all();
+        $business = $this->businessInfo();
         $title = 'Purchase Bills';
-        return view('purchases/bills', compact('bills', 'suppliers', 'supplier_id', 'status', 'title'));
+        return view('purchases/bills', compact('bills', 'suppliers', 'supplier_id', 'status', 'title', 'business'));
     }
 
     public function create() {
@@ -104,7 +105,8 @@ class PurchaseBillController extends BaseController {
         $suppliers = $this->supplierModel->all();
         $products = $this->productModel->all();
         $taxRate = \tax_rate();
-        return view('purchases/bill_form', compact('title', 'bill_number', 'suppliers', 'products', 'taxRate'));
+        $business = $this->businessInfo();
+        return view('purchases/bill_form', compact('title', 'bill_number', 'suppliers', 'products', 'taxRate', 'business'));
     }
 
     public function edit() {
@@ -182,7 +184,8 @@ class PurchaseBillController extends BaseController {
         $suppliers = $this->supplierModel->all();
         $products = $this->productModel->all();
         $taxRate = \tax_rate();
-        return view('purchases/bill_form', compact('title', 'bill', 'suppliers', 'products', 'taxRate'));
+        $business = $this->businessInfo();
+        return view('purchases/bill_form', compact('title', 'bill', 'suppliers', 'products', 'taxRate', 'business'));
     }
 
     public function delete() {

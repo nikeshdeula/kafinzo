@@ -23,12 +23,13 @@
         </div>
         <div class="col-md-4">
             <label class="form-label fw-600">Supplier <span class="text-danger">*</span></label>
-            <select name="supplier_id" class="form-select" required id="paymentSupplier">
+            <select name="supplier_id" class="form-select" required id="supplierSelect">
                 <option value="">— Select Supplier —</option>
                 <?php foreach ($suppliers as $sup): ?>
-                <option value="<?= $sup['id'] ?>"><?= htmlspecialchars($sup['name']) ?></option>
+                <option value="<?= $sup['id'] ?>" data-address="<?= htmlspecialchars($sup['address'] ?? '') ?>" data-company="<?= htmlspecialchars($sup['company_name'] ?? '') ?>" data-phone="<?= htmlspecialchars($sup['phone'] ?? '') ?>" data-email="<?= htmlspecialchars($sup['email'] ?? '') ?>" data-branch="<?= htmlspecialchars($sup['branch'] ?? '') ?>"><?= htmlspecialchars($sup['name']) ?><?= !empty($sup['branch']) ? ' — ' . htmlspecialchars($sup['branch']) : '' ?></option>
                 <?php endforeach; ?>
             </select>
+            <div id="supplierInfo" class="mt-1 small text-muted" style="display:none;"></div>
         </div>
         <div class="col-md-6">
             <label class="form-label fw-600">Against Bill</label>
@@ -95,6 +96,23 @@ document.getElementById('paymentBills').addEventListener('change', function() {
 document.getElementById('paymentOrders').addEventListener('change', function() {
     if (this.value) document.getElementById('paymentBills').value = '';
 });
+</script>
+<script>
+function showSupplierInfo() {
+    const sel = document.getElementById('supplierSelect');
+    const info = document.getElementById('supplierInfo');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.value) { info.style.display = 'none'; return; }
+    const parts = [];
+    if (opt.dataset.company) parts.push(opt.dataset.company);
+    if (opt.dataset.branch) parts.push(opt.dataset.branch);
+    if (opt.dataset.address) parts.push(opt.dataset.address);
+    if (opt.dataset.phone) parts.push('Ph: ' + opt.dataset.phone);
+    if (opt.dataset.email) parts.push(opt.dataset.email);
+    if (parts.length) { info.innerHTML = '<i class="bi bi-geo-alt me-1"></i>' + parts.join(' | '); info.style.display = 'block'; } else { info.style.display = 'none'; }
+}
+document.getElementById('supplierSelect').addEventListener('change', showSupplierInfo);
+showSupplierInfo();
 </script>
 
 <?php $content = ob_get_clean(); require BASE_PATH . 'views/layouts/app.php'; ?>

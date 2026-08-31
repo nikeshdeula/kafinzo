@@ -45,4 +45,16 @@ class BaseController
             'name' => $_SESSION['user_name'] ?? 'User',
         ];
     }
+
+    protected function businessInfo(): array
+    {
+        static $cache = null;
+        if ($cache !== null) return $cache;
+        $db = \App\Core\Database::getInstance()->getConnection();
+        $bid = $this->businessId();
+        $s = $db->prepare("SELECT * FROM businesses WHERE id=:bid LIMIT 1");
+        $s->execute(['bid' => $bid]);
+        $cache = $s->fetch() ?: [];
+        return $cache;
+    }
 }
