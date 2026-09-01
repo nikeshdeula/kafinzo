@@ -81,7 +81,12 @@ class SettingsController extends BaseController {
             } elseif (strlen($_POST['password']) < 6) {
                 $_SESSION['error'] = 'Password must be at least 6 characters.';
             } else {
-                $this->userModel->create($_POST);
+                $userId = $this->userModel->create($_POST);
+                // Link new user to current business
+                $bid = $this->businessId();
+                $db = Database::getInstance()->getConnection();
+                $stmt = $db->prepare('INSERT INTO business_users (business_id, user_id) VALUES (:bid, :uid)');
+                $stmt->execute(['bid' => $bid, 'uid' => $userId]);
                 $_SESSION['success'] = "User '{$name}' added successfully.";
             }
         }
