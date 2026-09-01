@@ -43,7 +43,11 @@ class AuthController
             $stmt = $db->prepare('SELECT business_id FROM business_users WHERE user_id = :uid LIMIT 1');
             $stmt->execute(['uid' => $user['id']]);
             $bu = $stmt->fetch();
-            $_SESSION['business_id'] = $bu ? (int)$bu['business_id'] : 1;
+            if (!$bu) {
+                $_SESSION['error'] = 'No business linked to this account.';
+                redirect('/login');
+            }
+            $_SESSION['business_id'] = (int)$bu['business_id'];
 
             redirect('/dashboard');
         } else {
