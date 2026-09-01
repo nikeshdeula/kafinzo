@@ -58,7 +58,8 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Bill #</th><th>Date</th><th>Customer</th><th>Branch</th><th>Address</th><th class="text-end">Total</th>
+                <th>Bill #</th><th>Date</th><th>Customer</th><th>Branch</th><th>Address</th>
+                <th class="text-end">Subtotal</th><th class="text-end">Discount</th><th class="text-end">Total</th>
                 <th class="text-end">TDS (1.5%)</th><th class="text-end">Grand Total</th>
                 <th class="text-end">Paid</th><th class="text-end">Balance</th><th>Status</th><th style="width:110px">Actions</th>
             </tr></thead>
@@ -84,6 +85,8 @@
                 <td><?= htmlspecialchars($b['customer_name'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($b['customer_branch'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($b['customer_address'] ?? '—') ?></td>
+                <td class="text-end">NPR <?= number_format($b['subtotal'] ?? 0, 2) ?></td>
+                <td class="text-end text-danger">NPR <?= number_format($b['discount_amount'] ?? 0, 2) ?></td>
                 <td class="text-end">NPR <?= number_format($b['total_amount'], 2) ?></td>
                 <td class="text-end text-danger">NPR <?= number_format($tds, 2) ?></td>
                 <td class="text-end fw-600 text-success">NPR <?= number_format($grandTotal, 2) ?></td>
