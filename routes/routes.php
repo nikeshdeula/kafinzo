@@ -25,6 +25,7 @@ $router->post('/sales/bills/create', 'Sales\SalesBillController@create');
 $router->get('/sales/bills/edit', 'Sales\SalesBillController@edit');
 $router->post('/sales/bills/edit', 'Sales\SalesBillController@edit');
 $router->post('/sales/bills/delete', 'Sales\SalesBillController@delete');
+$router->get('/sales/bills/export', 'Sales\SalesBillController@export');
 
 // Sales — Orders
 $router->get('/sales/orders', 'Sales\SalesOrderController@index');

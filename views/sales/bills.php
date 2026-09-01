@@ -15,8 +15,26 @@
 
 <div class="card mb-3">
     <div class="card-body py-3">
-        <form method="GET" action="/sales/bills" class="row g-3 align-items-end">
-            <div class="col-md-4">
+        <form method="GET" action="/sales/bills" class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label fw-600 small text-muted">Nepali Month</label>
+                <select name="bs_month" class="form-select form-select-sm">
+                    <option value="">All Months</option>
+                    <?php foreach ($nepaliMonths as $m => $name): ?>
+                    <option value="<?= $m ?>" <?= ($bsMonth ?? '') == $m ? 'selected' : '' ?>><?= $name ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-600 small text-muted">Year</label>
+                <select name="bs_year" class="form-select form-select-sm">
+                    <option value="">All Years</option>
+                    <?php foreach ($years as $y): ?>
+                    <option value="<?= $y ?>" <?= ($bsYear ?? $currentYear) == $y ? 'selected' : '' ?>><?= $y ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label class="form-label fw-600 small text-muted">Customer</label>
                 <select name="customer_id" class="form-select form-select-sm">
                     <option value="">All Customers</option>
@@ -25,25 +43,29 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label fw-600 small text-muted">Status</label>
                 <select name="status" class="form-select form-select-sm">
                     <option value="">All Statuses</option>
-                    <option value="draft" <?= ($status ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
-                    <option value="unpaid" <?= ($status ?? '') === 'unpaid' ? 'selected' : '' ?>>Unpaid</option>
-                    <option value="partial" <?= ($status ?? '') === 'partial' ? 'selected' : '' ?>>Partial</option>
-                    <option value="paid" <?= ($status ?? '') === 'paid' ? 'selected' : '' ?>>Paid</option>
-                    <option value="overdue" <?= ($status ?? '') === 'overdue' ? 'selected' : '' ?>>Overdue</option>
-                    <option value="cancelled" <?= ($status ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                    <?php foreach (['draft'=>'Draft','unpaid'=>'Unpaid','partial'=>'Partial','paid'=>'Paid','overdue'=>'Overdue','cancelled'=>'Cancelled'] as $v => $l): ?>
+                    <option value="<?= $v ?>" <?= ($status ?? '') === $v ? 'selected' : '' ?>><?= $l ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-funnel me-1"></i> Filter</button>
+                <label class="form-label fw-600 small text-muted">Search</label>
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="Name, address, bill #" value="<?= htmlspecialchars($search ?? '') ?>">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-funnel"></i></button>
+            </div>
+            <div class="col-md-1">
                 <a href="/sales/bills" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
             </div>
         </form>
+        <div class="mt-2">
+            <a href="/sales/bills/export<?= http_build_query(array_filter(['customer_id'=>$customer_id??'', 'status'=>$status??'', 'bs_year'=>$bsYear??'', 'bs_month'=>$bsMonth??'', 'search'=>$search??''])) ?>" class="btn btn-success btn-sm"><i class="bi bi-file-earmark-excel me-1"></i> Export Excel</a>
+        </div>
     </div>
 </div>
 

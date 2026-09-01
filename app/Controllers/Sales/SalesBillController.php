@@ -22,11 +22,61 @@ class SalesBillController extends BaseController {
         $this->requireAuth();
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
         $status = $_GET['status'] ?? null;
-        $bills = $this->model->all($this->businessId(), $customer_id, $status);
+        $bsYear = isset($_GET['bs_year']) ? (int)$_GET['bs_year'] : null;
+        $bsMonth = isset($_GET['bs_month']) ? (int)$_GET['bs_month'] : null;
+        $search = trim($_GET['search'] ?? '') ?: null;
+        $bills = $this->model->all($this->businessId(), $customer_id, $status, $bsYear, $bsMonth, $search);
         $customers = $this->customerModel->all();
         $business = $this->businessInfo();
         $title = 'Sales Bills';
-        return view('sales/bills', compact('bills', 'customers', 'customer_id', 'status', 'title', 'business'));
+
+        $nepaliMonths = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+        $currentBs = ad_to_bs(date('Y-m-d'));
+        $currentYear = $currentBs['year'] ?? 2083;
+        $years = range($currentYear - 2, $currentYear + 1);
+
+        return view('sales/bills', compact('bills', 'customers', 'customer_id', 'status', 'bsYear', 'bsMonth', 'search', 'title', 'business', 'nepaliMonths', 'years', 'currentYear'));
+    }
+
+    public function export() {
+        $this->requireAuth();
+        $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
+        $status = $_GET['status'] ?? null;
+        $bsYear = isset($_GET['bs_year']) ? (int)$_GET['bs_year'] : null;
+        $bsMonth = isset($_GET['bs_month']) ? (int)$_GET['bs_month'] : null;
+        $search = trim($_GET['search'] ?? '') ?: null;
+        $bills = $this->model->all($this->businessId(), $customer_id, $status, $bsYear, $bsMonth, $search);
+        $business = $this->businessInfo();
+
+        $nepaliMonths = ['','Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+        $period = 'All Bills';
+        if ($bsYear && $bsMonth) {
+            $period = ($nepaliMonths[$bsMonth] ?? '') . ' ' . $bsYear;
+        }
+
+        $headers = ['Bill #', 'Date', 'Customer', 'Address', 'Subtotal', 'Discount', 'Total', 'TDS (1.5%)', 'Grand Total', 'Paid', 'Balance', 'Status'];
+        $rows = [];
+        foreach ($bills as $b) {
+            $tds = $b['total_amount'] * 0.015;
+            $grandTotal = $b['total_amount'] - $tds;
+            $balance = $grandTotal - $b['paid_amount'];
+            $rows[] = [
+                $b['bill_number'],
+                nepali_date('d M Y', $b['bill_date']),
+                $b['customer_name'] ?? '—',
+                $b['customer_address'] ?? '—',
+                number_format($b['subtotal'] ?? 0, 2),
+                number_format($b['discount_amount'] ?? 0, 2),
+                number_format($b['total_amount'], 2),
+                number_format($tds, 2),
+                number_format($grandTotal, 2),
+                number_format($b['paid_amount'], 2),
+                number_format($balance, 2),
+                ucfirst($b['status']),
+            ];
+        }
+
+        \excel_export_styled($business['name'] ?? 'Business', 'Sales Bills', $period, $headers, $rows, null, 'sales_bills.xls');
     }
 
     public function create() {
