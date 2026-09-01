@@ -290,11 +290,12 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0" id="itemsTable">
                     <thead class="table-light"><tr>
-                        <th style="width:42%">Product / Description</th>
-                        <th style="width:10%" class="text-center">Qty</th>
-                        <th style="width:15%" class="text-end">Price</th>
-                        <th style="width:10%" class="text-center">Disc %</th>
-                        <th style="width:15%" class="text-end">Amount</th>
+                        <th style="width:35%">Product / Description</th>
+                        <th style="width:12%" class="text-center">Unit</th>
+                        <th style="width:8%" class="text-center">Qty</th>
+                        <th style="width:13%" class="text-end">Price</th>
+                        <th style="width:8%" class="text-center">Disc %</th>
+                        <th style="width:13%" class="text-end">Amount</th>
                         <th style="width:8%" class="text-center">Action</th>
                     </tr></thead>
                     <tbody>
@@ -302,10 +303,18 @@
                         <?php foreach ($bill['items'] as $idx => $item): ?>
                         <tr>
                             <td>
-                                <select name="items[<?= $idx ?>][product_id]" class="form-select form-select-sm">
+                                <select name="items[<?= $idx ?>][product_id]" class="form-select form-select-sm product-select">
                                     <option value="">— Select —</option>
                                     <?php foreach ($products as $p): ?>
-                                    <option value="<?= $p['id'] ?>" <?= ($item['product_id'] ?? '') == $p['id'] ? 'selected' : '' ?>><?= htmlspecialchars($p['name']) ?></option>
+                                    <option value="<?= $p['id'] ?>" data-unit-id="<?= $p['unit_id'] ?? '' ?>" <?= ($item['product_id'] ?? '') == $p['id'] ? 'selected' : '' ?>><?= htmlspecialchars($p['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <select name="items[<?= $idx ?>][unit_id]" class="form-select form-select-sm unit-select">
+                                    <option value="">—</option>
+                                    <?php foreach ($units as $u): ?>
+                                    <option value="<?= $u['id'] ?>" <?= ($item['unit_id'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= htmlspecialchars($u['abbreviation'] ?? $u['name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </td>
@@ -319,10 +328,18 @@
                     <?php else: ?>
                         <tr>
                             <td>
-                                <select name="items[0][product_id]" class="form-select form-select-sm">
+                                <select name="items[0][product_id]" class="form-select form-select-sm product-select">
                                     <option value="">— Select —</option>
                                     <?php foreach ($products as $p): ?>
-                                    <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['name']) ?></option>
+                                    <option value="<?= $p['id'] ?>" data-unit-id="<?= $p['unit_id'] ?? '' ?>"><?= htmlspecialchars($p['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <select name="items[0][unit_id]" class="form-select form-select-sm unit-select">
+                                    <option value="">—</option>
+                                    <?php foreach ($units as $u): ?>
+                                    <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['abbreviation'] ?? $u['name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </td>
@@ -472,17 +489,23 @@ document.querySelectorAll('.quick-create-form').forEach(form => {
         }
     });
 });
+<?php $productOptions = ''; foreach ($products as $p): $productOptions .= '<option value="' . $p['id'] . '" data-unit-id="' . ($p['unit_id'] ?? '') . '">' . htmlspecialchars($p['name']) . '</option>'; endforeach; ?>
+<?php $unitOptions = '<option value="">—</option>'; foreach ($units as $u): $unitOptions .= '<option value="' . $u['id'] . '">' . htmlspecialchars($u['abbreviation'] ?? $u['name']) . '</option>'; endforeach; ?>
 let itemIndex = <?= isset($bill['items']) ? count($bill['items']) : 1 ?>;
 const defaultTax = <?= json_encode($taxRate) ?>;
+const unitOptionsHtml = '<?= str_replace("'", "\\'", $unitOptions) ?>';
 function addItemRow() {
     const tbody = document.querySelector('#itemsTable tbody');
     const row = document.createElement('tr');
     row.innerHTML = `<td>
-        <select name="items[${itemIndex}][product_id]" class="form-select form-select-sm">
+        <select name="items[${itemIndex}][product_id]" class="form-select form-select-sm product-select">
             <option value="">— Select Product —</option>
-            <?php foreach ($products as $p): ?>
-            <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['name']) ?></option>
-            <?php endforeach; ?>
+            <?= $productOptions ?>
+        </select>
+    </td>
+    <td class="text-center">
+        <select name="items[${itemIndex}][unit_id]" class="form-select form-select-sm unit-select">
+            ${unitOptionsHtml}
         </select>
     </td>
     <td><input type="number" name="items[${itemIndex}][quantity]" class="form-control form-control-sm item-qty" value="1" min="0" step="0.01"></td>
@@ -506,6 +529,15 @@ function attachRowListeners(row) {
     row.querySelectorAll('.item-qty, .item-price, .item-discount').forEach(el => {
         el.addEventListener('input', calculateTotals);
     });
+    const prodSel = row.querySelector('.product-select');
+    if (prodSel) {
+        prodSel.addEventListener('change', function() {
+            const opt = this.options[this.selectedIndex];
+            const unitId = opt?.dataset?.unitId || '';
+            const unitSel = row.querySelector('.unit-select');
+            if (unitSel && unitId) unitSel.value = unitId;
+        });
+    }
 }
 document.querySelectorAll('#itemsTable tbody tr').forEach(attachRowListeners);
 function calculateTotals() {

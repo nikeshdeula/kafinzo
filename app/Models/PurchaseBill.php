@@ -78,11 +78,12 @@ class PurchaseBill {
     public function saveItems(int $bill_id, array $items): void {
         $bid = $_SESSION['business_id'] ?? 0;
         $this->db->prepare("DELETE FROM purchase_bill_items WHERE purchase_bill_id=:bid AND EXISTS (SELECT 1 FROM purchase_bills WHERE id=:bid2 AND business_id=:biz)")->execute(['bid'=>$bill_id,'bid2'=>$bill_id,'biz'=>$bid]);
-        $s = $this->db->prepare("INSERT INTO purchase_bill_items (purchase_bill_id,product_id,description,quantity,unit_price,discount_pct,tax_rate,amount) VALUES (:bid,:pid,:desc,:qty,:price,:disc,:tax,:amt)");
+        $s = $this->db->prepare("INSERT INTO purchase_bill_items (purchase_bill_id,product_id,unit_id,description,quantity,unit_price,discount_pct,tax_rate,amount) VALUES (:bid,:pid,:uid,:desc,:qty,:price,:disc,:tax,:amt)");
         foreach ($items as $item) {
             $s->execute([
                 'bid'=>$bill_id,
                 'pid'=>$item['product_id']??null,
+                'uid'=>$item['unit_id']??null,
                 'desc'=>$item['description']??'',
                 'qty'=>$item['quantity']??0,
                 'price'=>$item['unit_price']??0,

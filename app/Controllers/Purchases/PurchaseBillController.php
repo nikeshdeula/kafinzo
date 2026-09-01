@@ -70,6 +70,7 @@ class PurchaseBillController extends BaseController {
 
                     $items[] = [
                         'product_id' => !empty($item['product_id']) ? (int)$item['product_id'] : null,
+                        'unit_id' => !empty($item['unit_id']) ? (int)$item['unit_id'] : null,
                         'description' => trim($item['description'] ?? ''),
                         'quantity' => $qty,
                         'unit_price' => $price,
@@ -108,9 +109,10 @@ class PurchaseBillController extends BaseController {
         $bill_number = $this->model->nextNumber();
         $suppliers = $this->supplierModel->all();
         $products = $this->productModel->all();
+        $units = $this->productModel->units($this->businessId());
         $taxRate = \tax_rate();
         $business = $this->businessInfo();
-        return view('purchases/bill_form', compact('title', 'bill_number', 'suppliers', 'products', 'taxRate', 'business'));
+        return view('purchases/bill_form', compact('title', 'bill_number', 'suppliers', 'products', 'units', 'taxRate', 'business'));
     }
 
     public function edit() {
@@ -151,6 +153,7 @@ class PurchaseBillController extends BaseController {
 
                     $items[] = [
                         'product_id' => !empty($item['product_id']) ? (int)$item['product_id'] : null,
+                        'unit_id' => !empty($item['unit_id']) ? (int)$item['unit_id'] : null,
                         'description' => trim($item['description'] ?? ''),
                         'quantity' => $qty,
                         'unit_price' => $price,
@@ -187,9 +190,10 @@ class PurchaseBillController extends BaseController {
         $title = 'Edit Purchase Bill';
         $suppliers = $this->supplierModel->all();
         $products = $this->productModel->all();
+        $units = $this->productModel->units($this->businessId());
         $taxRate = \tax_rate();
         $business = $this->businessInfo();
-        return view('purchases/bill_form', compact('title', 'bill', 'suppliers', 'products', 'taxRate', 'business'));
+        return view('purchases/bill_form', compact('title', 'bill', 'suppliers', 'products', 'units', 'taxRate', 'business'));
     }
 
     public function delete() {

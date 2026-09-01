@@ -68,6 +68,7 @@ class SalesBillController extends BaseController {
 
                     $items[] = [
                         'product_id' => !empty($item['product_id']) ? (int)$item['product_id'] : null,
+                        'unit_id' => !empty($item['unit_id']) ? (int)$item['unit_id'] : null,
                         'description' => trim($item['description'] ?? ''),
                         'quantity' => $qty,
                         'unit_price' => $price,
@@ -108,9 +109,10 @@ class SalesBillController extends BaseController {
         $bill_number = $this->model->nextNumber();
         $customers = $this->customerModel->all();
         $products = $this->productModel->all();
+        $units = $this->productModel->units($this->businessId());
         $taxRate = \tax_rate();
         $business = $this->businessInfo();
-        return view('sales/bill_form', compact('title', 'bill_number', 'customers', 'products', 'taxRate', 'business'));
+        return view('sales/bill_form', compact('title', 'bill_number', 'customers', 'products', 'units', 'taxRate', 'business'));
     }
 
     public function edit() {
@@ -152,6 +154,7 @@ class SalesBillController extends BaseController {
 
                     $items[] = [
                         'product_id' => !empty($item['product_id']) ? (int)$item['product_id'] : null,
+                        'unit_id' => !empty($item['unit_id']) ? (int)$item['unit_id'] : null,
                         'description' => trim($item['description'] ?? ''),
                         'quantity' => $qty,
                         'unit_price' => $price,
@@ -190,9 +193,10 @@ class SalesBillController extends BaseController {
         $title = 'Edit Sales Bill';
         $customers = $this->customerModel->all();
         $products = $this->productModel->all();
+        $units = $this->productModel->units($this->businessId());
         $taxRate = \tax_rate();
         $business = $this->businessInfo();
-        return view('sales/bill_form', compact('title', 'bill', 'customers', 'products', 'taxRate', 'business'));
+        return view('sales/bill_form', compact('title', 'bill', 'customers', 'products', 'units', 'taxRate', 'business'));
     }
 
     public function delete() {
