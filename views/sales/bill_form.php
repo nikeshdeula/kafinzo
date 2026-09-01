@@ -394,6 +394,10 @@
                             <input type="text" name="pan" class="form-control">
                         </div>
                         <div class="col-md-6">
+                            <label class="form-label fw-semibold">VAT Number</label>
+                            <input type="text" name="vat_number" class="form-control">
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold">Phone</label>
                             <input type="text" name="phone" class="form-control">
                         </div>
