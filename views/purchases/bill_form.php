@@ -291,8 +291,8 @@
                 <table class="table table-hover mb-0" id="itemsTable">
                     <thead class="table-light"><tr>
                         <th style="width:35%">Product / Description</th>
-                        <th style="width:12%" class="text-center">Unit</th>
                         <th style="width:8%" class="text-center">Qty</th>
+                        <th style="width:12%" class="text-center">Unit</th>
                         <th style="width:13%" class="text-end">Price</th>
                         <th style="width:8%" class="text-center">Disc %</th>
                         <th style="width:13%" class="text-end">Amount</th>
@@ -310,6 +310,7 @@
                                     <?php endforeach; ?>
                                 </select>
                             </td>
+                            <td class="text-center"><input type="number" name="items[<?= $idx ?>][quantity]" class="form-control form-control-sm item-qty text-center" value="<?= htmlspecialchars($item['quantity'] ?? 1) ?>" min="0" step="0.01"></td>
                             <td class="text-center">
                                 <select name="items[<?= $idx ?>][unit_id]" class="form-select form-select-sm unit-select">
                                     <option value="">—</option>
@@ -318,7 +319,6 @@
                                     <?php endforeach; ?>
                                 </select>
                             </td>
-                            <td class="text-center"><input type="number" name="items[<?= $idx ?>][quantity]" class="form-control form-control-sm item-qty text-center" value="<?= htmlspecialchars($item['quantity'] ?? 1) ?>" min="0" step="0.01"></td>
                             <td class="text-end"><input type="number" name="items[<?= $idx ?>][unit_price]" class="form-control form-control-sm item-price text-end" value="<?= htmlspecialchars($item['unit_price'] ?? 0) ?>" min="0" step="0.01"></td>
                             <td class="text-center"><input type="number" name="items[<?= $idx ?>][discount_pct]" class="form-control form-control-sm item-discount text-center" value="<?= htmlspecialchars($item['discount_pct'] ?? 0) ?>" min="0" step="0.01"></td>
                             <td class="text-end fw-600 item-amount">NPR <?= number_format($item['amount'] ?? 0, 2) ?></td>
@@ -335,6 +335,7 @@
                                     <?php endforeach; ?>
                                 </select>
                             </td>
+                            <td class="text-center"><input type="number" name="items[0][quantity]" class="form-control form-control-sm item-qty text-center" value="1" min="0" step="0.01"></td>
                             <td class="text-center">
                                 <select name="items[0][unit_id]" class="form-select form-select-sm unit-select">
                                     <option value="">—</option>
@@ -343,7 +344,6 @@
                                     <?php endforeach; ?>
                                 </select>
                             </td>
-                            <td class="text-center"><input type="number" name="items[0][quantity]" class="form-control form-control-sm item-qty text-center" value="1" min="0" step="0.01"></td>
                             <td class="text-end"><input type="number" name="items[0][unit_price]" class="form-control form-control-sm item-price text-end" value="0" min="0" step="0.01"></td>
                             <td class="text-center"><input type="number" name="items[0][discount_pct]" class="form-control form-control-sm item-discount text-center" value="0" min="0" step="0.01"></td>
                             <td class="text-end fw-600 item-amount">NPR 0.00</td>
@@ -503,12 +503,12 @@ function addItemRow() {
             <?= $productOptions ?>
         </select>
     </td>
+    <td><input type="number" name="items[${itemIndex}][quantity]" class="form-control form-control-sm item-qty" value="1" min="0" step="0.01"></td>
     <td class="text-center">
         <select name="items[${itemIndex}][unit_id]" class="form-select form-select-sm unit-select">
             ${unitOptionsHtml}
         </select>
     </td>
-    <td><input type="number" name="items[${itemIndex}][quantity]" class="form-control form-control-sm item-qty" value="1" min="0" step="0.01"></td>
     <td><input type="number" name="items[${itemIndex}][unit_price]" class="form-control form-control-sm item-price" value="0" min="0" step="0.01"></td>
     <td><input type="number" name="items[${itemIndex}][discount_pct]" class="form-control form-control-sm item-discount" value="0" min="0" step="0.01"></td>
     <td class="text-end fw-600 item-amount">NPR 0.00</td>
