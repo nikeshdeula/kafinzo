@@ -20,7 +20,7 @@ class SalesPayment {
 
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO sales_payments (business_id,invoice_id,customer_id,payment_date,payment_method,reference_number,amount,notes) VALUES (:bid,:iid,:cid,:pdate,:method,:ref,:amount,:notes)");
-        $s->execute(['bid'=>$d['business_id']??1,'iid'=>$d['invoice_id'],'cid'=>$d['customer_id'],'pdate'=>$d['payment_date'],'method'=>$d['payment_method'],'ref'=>$d['reference_number']??null,'amount'=>$d['amount'],'notes'=>$d['notes']??null]);
+        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??0),'iid'=>$d['invoice_id'],'cid'=>$d['customer_id'],'pdate'=>$d['payment_date'],'method'=>$d['payment_method'],'ref'=>$d['reference_number']??null,'amount'=>$d['amount'],'notes'=>$d['notes']??null]);
         return (int)$this->db->lastInsertId();
     }
 

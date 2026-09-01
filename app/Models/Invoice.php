@@ -25,7 +25,7 @@ class Invoice {
 
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO invoices (business_id,customer_id,invoice_number,invoice_date,due_date,subtotal,tax_amount,discount_amount,total_amount,paid_amount,status,notes) VALUES (:bid,:cid,:num,:idate,:due,:sub,:tax,:disc,:total,:paid,:status,:notes)");
-        $s->execute(['bid'=>$d['business_id']??1,'cid'=>$d['customer_id'],'num'=>$d['invoice_number'],'idate'=>$d['invoice_date'],'due'=>$d['due_date']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'total'=>$d['total_amount']??0,'paid'=>$d['paid_amount']??0,'status'=>$d['status']??'draft','notes'=>$d['notes']??null]);
+        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??0),'cid'=>$d['customer_id'],'num'=>$d['invoice_number'],'idate'=>$d['invoice_date'],'due'=>$d['due_date']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'total'=>$d['total_amount']??0,'paid'=>$d['paid_amount']??0,'status'=>$d['status']??'draft','notes'=>$d['notes']??null]);
         return (int)$this->db->lastInsertId();
     }
 

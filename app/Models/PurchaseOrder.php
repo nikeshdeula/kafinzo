@@ -36,7 +36,7 @@ class PurchaseOrder {
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO purchase_orders (business_id,supplier_id,order_number,order_date,expected_delivery,subtotal,tax_amount,discount_amount,total_amount,status,notes) VALUES (:bid,:sid,:on,:od,:ed,:sub,:tax,:disc,:tot,:st,:notes)");
         $s->execute([
-            'bid'=>$d['business_id']??1,
+            'bid'=>$d['business_id']??($_SESSION['business_id']??0),
             'sid'=>$d['supplier_id'],
             'on'=>$d['order_number'],
             'od'=>$d['order_date'],

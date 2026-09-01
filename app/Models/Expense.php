@@ -12,7 +12,7 @@ class Expense {
     }
     public function create(array $d): int {
         $s=$this->db->prepare("INSERT INTO expenses (business_id,category_id,expense_date,vendor,amount,tax_amount,payment_account,description,reference) VALUES (:bid,:cat,:date,:vendor,:amount,:tax,:account,:desc,:ref)");
-        $s->execute(['bid'=>$d['business_id']??1,'cat'=>$d['category_id']??null,'date'=>$d['expense_date'],'vendor'=>$d['vendor']??null,'amount'=>$d['amount']??0,'tax'=>$d['tax_amount']??0,'account'=>$d['payment_account']??null,'desc'=>$d['description']??null,'ref'=>$d['reference']??null]);
+        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??0),'cat'=>$d['category_id']??null,'date'=>$d['expense_date'],'vendor'=>$d['vendor']??null,'amount'=>$d['amount']??0,'tax'=>$d['tax_amount']??0,'account'=>$d['payment_account']??null,'desc'=>$d['description']??null,'ref'=>$d['reference']??null]);
         return (int)$this->db->lastInsertId();
     }
     public function categories(int $bid=1): array {

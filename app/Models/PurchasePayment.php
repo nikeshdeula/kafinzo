@@ -22,7 +22,7 @@ class PurchasePayment {
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO purchase_payments (business_id,bill_id,order_id,supplier_id,payment_number,payment_date,amount,payment_method,reference,notes) VALUES (:bid,:bill_id,:order_id,:sid,:pn,:pd,:amt,:pm,:ref,:notes)");
         $s->execute([
-            'bid'=>$d['business_id']??1,
+            'bid'=>$d['business_id']??($_SESSION['business_id']??0),
             'bill_id'=>$d['bill_id']??null,
             'order_id'=>$d['order_id']??null,
             'sid'=>$d['supplier_id'],

@@ -18,7 +18,7 @@ class Product {
     }
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO products (business_id,category_id,unit_id,name,sku,type,purchase_price,selling_price,tax_rate,opening_stock,current_stock,minimum_stock,description,status) VALUES (:bid,:cat,:unit,:name,:sku,:type,:pp,:sp,:tax,:os,:cs,:ms,:desc,:status)");
-        $s->execute(['bid'=>$d['business_id']??1,'cat'=>$d['category_id']??null,'unit'=>$d['unit_id']??null,'name'=>$d['name'],'sku'=>$d['sku']??null,'type'=>$d['type']??'product','pp'=>$d['purchase_price']??0,'sp'=>$d['selling_price']??0,'tax'=>$d['tax_rate']??0,'os'=>$d['opening_stock']??0,'cs'=>$d['opening_stock']??0,'ms'=>$d['minimum_stock']??0,'desc'=>$d['description']??null,'status'=>$d['status']??'active']);
+        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??0),'cat'=>$d['category_id']??null,'unit'=>$d['unit_id']??null,'name'=>$d['name'],'sku'=>$d['sku']??null,'type'=>$d['type']??'product','pp'=>$d['purchase_price']??0,'sp'=>$d['selling_price']??0,'tax'=>$d['tax_rate']??0,'os'=>$d['opening_stock']??0,'cs'=>$d['opening_stock']??0,'ms'=>$d['minimum_stock']??0,'desc'=>$d['description']??null,'status'=>$d['status']??'active']);
         return (int)$this->db->lastInsertId();
     }
     public function categories(int $bid=1): array {

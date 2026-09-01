@@ -18,7 +18,7 @@ class Supplier {
     }
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO suppliers (business_id,name,company_name,branch,pan,vat_number,phone,email,address,opening_balance,payment_terms,status) VALUES (:bid,:name,:company,:branch,:pan,:vat,:phone,:email,:address,:opening,:terms,:status)");
-        $s->execute(['bid'=>$d['business_id']??1,'name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'opening'=>$d['opening_balance']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active']);
+        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??0),'name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'opening'=>$d['opening_balance']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active']);
         return (int)$this->db->lastInsertId();
     }
     public function update(int $id, array $d, int $bid = 0): bool {

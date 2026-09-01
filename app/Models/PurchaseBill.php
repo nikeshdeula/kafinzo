@@ -36,7 +36,7 @@ class PurchaseBill {
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO purchase_bills (business_id,supplier_id,bill_number,bill_date,due_date,subtotal,tax_amount,discount_amount,total_amount,paid_amount,status,notes) VALUES (:bid,:sid,:bn,:bd,:dd,:sub,:tax,:disc,:tot,:paid,:st,:notes)");
         $s->execute([
-            'bid'=>$d['business_id']??1,
+            'bid'=>$d['business_id']??($_SESSION['business_id']??0),
             'sid'=>$d['supplier_id'],
             'bn'=>$d['bill_number'],
             'bd'=>$d['bill_date'],

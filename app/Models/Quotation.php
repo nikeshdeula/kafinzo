@@ -25,7 +25,7 @@ class Quotation {
 
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO quotations (business_id,customer_id,quotation_number,quotation_date,valid_until,subtotal,tax_amount,discount_amount,total_amount,status,notes) VALUES (:bid,:cid,:num,:qdate,:valid,:sub,:tax,:disc,:total,:status,:notes)");
-        $s->execute(['bid'=>$d['business_id']??1,'cid'=>$d['customer_id'],'num'=>$d['quotation_number'],'qdate'=>$d['quotation_date'],'valid'=>$d['valid_until']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'total'=>$d['total_amount']??0,'status'=>$d['status']??'draft','notes'=>$d['notes']??null]);
+        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??0),'cid'=>$d['customer_id'],'num'=>$d['quotation_number'],'qdate'=>$d['quotation_date'],'valid'=>$d['valid_until']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'total'=>$d['total_amount']??0,'status'=>$d['status']??'draft','notes'=>$d['notes']??null]);
         return (int)$this->db->lastInsertId();
     }
 
