@@ -32,7 +32,11 @@
                 <td><?= $wh['is_default'] ? '<span class="badge bg-success-subtle text-success">Default</span>' : '—' ?></td>
                 <td class="text-end">
                     <a href="/inventory/warehouses/edit?id=<?= $wh['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                    <a href="/inventory/warehouses/delete?id=<?= $wh['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this warehouse?')"><i class="bi bi-trash"></i></a>
+                    <form method="POST" action="/inventory/warehouses/delete" style="display:inline" onsubmit="return confirm('Delete this warehouse?')">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                        <input type="hidden" name="id" value="<?= $wh['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
                 </td>
             </tr>
             <?php endforeach; ?>

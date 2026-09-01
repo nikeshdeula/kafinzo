@@ -83,6 +83,7 @@
                     <div class="d-flex gap-1">
                         <a href="/sales/orders/edit?id=<?= $o['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
                         <form method="POST" action="/sales/orders/delete" class="d-inline" onsubmit="return confirm('Delete this order?')">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                             <input type="hidden" name="id" value="<?= $o['id'] ?>">
                             <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                         </form>

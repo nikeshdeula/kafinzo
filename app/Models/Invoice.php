@@ -37,7 +37,7 @@ class Invoice {
 
     public function delete(int $id, int $bid = 0): bool {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
-        $this->db->prepare("DELETE FROM invoice_items WHERE invoice_id=:id")->execute(['id'=>$id]);
+        $this->db->prepare("DELETE FROM invoice_items WHERE invoice_id=:id AND EXISTS (SELECT 1 FROM invoices WHERE id=:id2 AND business_id=:bid)")->execute(['id'=>$id,'id2'=>$id,'bid'=>$bid]);
         $s = $this->db->prepare("DELETE FROM invoices WHERE id=:id AND business_id=:bid");
         return $s->execute(['id'=>$id,'bid'=>$bid]);
     }

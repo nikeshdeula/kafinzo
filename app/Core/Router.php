@@ -40,10 +40,10 @@ class Router
                     if (method_exists($controller, $methodName)) {
                         return $controller->$methodName();
                     } else {
-                        $this->abort(404, "Method $methodName not found in $controllerClass");
+                        $this->abort(404);
                     }
                 } else {
-                    $this->abort(404, "Controller class $controllerClass not found");
+                    $this->abort(404);
                 }
             }
         }

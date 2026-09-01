@@ -38,8 +38,12 @@
                     <?php endforeach; ?>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick='openRoleModal(<?= json_encode($r) ?>, <?= json_encode(array_column($perms, 'id')) ?>)'><i class="bi bi-pencil"></i></button>
-                    <a href="/settings/roles/delete?id=<?= $r['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this role?')"><i class="bi bi-trash"></i></a>
+                    <button class="btn btn-sm btn-outline-primary" onclick='openRoleModal(JSON.parse(this.dataset.role), JSON.parse(this.dataset.perms))' data-role='<?= htmlspecialchars(json_encode($r), ENT_QUOTES) ?>' data-perms='<?= htmlspecialchars(json_encode(array_column($perms, 'id')), ENT_QUOTES) ?>'><i class="bi bi-pencil"></i></button>
+                    <form method="POST" action="/settings/roles/delete" style="display:inline" onsubmit="return confirm('Delete this role?')">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                        <input type="hidden" name="id" value="<?= $r['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
                 </td>
             </tr>
             <?php endforeach; ?>

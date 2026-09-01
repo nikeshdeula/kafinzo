@@ -61,7 +61,7 @@ class SalesOrder {
 
     public function delete(int $id, int $bid = 0): bool {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
-        $this->db->prepare("DELETE FROM sales_order_items WHERE sales_order_id=:id")->execute(['id'=>$id]);
+        $this->db->prepare("DELETE FROM sales_order_items WHERE sales_order_id=:id AND EXISTS (SELECT 1 FROM sales_orders WHERE id=:id2 AND business_id=:bid)")->execute(['id'=>$id,'id2'=>$id,'bid'=>$bid]);
         $s = $this->db->prepare("DELETE FROM sales_orders WHERE id=:id AND business_id=:bid");
         return $s->execute(['id'=>$id,'bid'=>$bid]);
     }
@@ -75,7 +75,8 @@ class SalesOrder {
     }
 
     public function saveItems(int $order_id, array $items): void {
-        $this->db->prepare("DELETE FROM sales_order_items WHERE sales_order_id=:oid")->execute(['oid'=>$order_id]);
+        $bid = $_SESSION['business_id'] ?? 0;
+        $this->db->prepare("DELETE FROM sales_order_items WHERE sales_order_id=:oid AND EXISTS (SELECT 1 FROM sales_orders WHERE id=:oid2 AND business_id=:bid)")->execute(['oid'=>$order_id,'oid2'=>$order_id,'bid'=>$bid]);
         $s = $this->db->prepare("INSERT INTO sales_order_items (sales_order_id,product_id,description,quantity,unit_price,discount_pct,tax_rate,amount) VALUES (:oid,:pid,:desc,:qty,:price,:disc,:tax,:amt)");
         foreach ($items as $item) {
             $s->execute([

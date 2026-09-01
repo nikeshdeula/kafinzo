@@ -5,8 +5,13 @@ namespace App\Controllers;
 use App\Core\Database;
 use PDO;
 
-class AuthController
+class AuthController extends BaseController
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function loginForm()
     {
         if (isset($_SESSION['user_id'])) {
@@ -17,13 +22,26 @@ class AuthController
 
     public function login()
     {
-        $email = $_POST['email'] ?? '';
+        $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
             $_SESSION['error'] = 'Please enter both email and password.';
             redirect('/login');
         }
+
+        // Rate limiting: max 5 attempts per minute per email
+        $rateKey = 'login_attempts_' . md5($email);
+        $attempts = $_SESSION[$rateKey] ?? ['count' => 0, 'first' => time()];
+        if (time() - $attempts['first'] > 60) {
+            $attempts = ['count' => 0, 'first' => time()];
+        }
+        if ($attempts['count'] >= 5) {
+            $_SESSION['error'] = 'Too many login attempts. Please wait a minute.';
+            redirect('/login');
+        }
+        $attempts['count']++;
+        $_SESSION[$rateKey] = $attempts;
 
         $db = Database::getInstance()->getConnection();
         $stmt = $db->prepare('SELECT * FROM users WHERE email = :email LIMIT 1');
@@ -35,6 +53,8 @@ class AuthController
                 $_SESSION['error'] = 'Account is not active.';
                 redirect('/login');
             }
+
+            session_regenerate_id(true);
 
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['full_name'];
@@ -74,6 +94,20 @@ class AuthController
 
         if (empty($fullName) || empty($email) || empty($password)) {
             $_SESSION['error'] = 'Please fill all required fields.';
+            redirect('/register');
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Please enter a valid email address.';
+            redirect('/register');
+        }
+
+        if (strlen($password) < 8) {
+            $_SESSION['error'] = 'Password must be at least 8 characters long.';
+            redirect('/register');
+        }
+        if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password)) {
+            $_SESSION['error'] = 'Password must contain uppercase, lowercase, and a number.';
             redirect('/register');
         }
 
@@ -161,6 +195,11 @@ class AuthController
 
     public function logout()
     {
+        $_SESSION = [];
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
+        }
         session_destroy();
         redirect('/login');
     }

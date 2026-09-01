@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
     <title><?= htmlspecialchars($title ?? 'Kafinzo') ?> — Kafinzo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -228,6 +229,7 @@
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form action="/logout" method="POST">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                 <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
                             </form>
                         </li>
@@ -245,6 +247,21 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Auto-inject CSRF tokens into all POST forms
+document.querySelectorAll('form[method="POST"], form[method="post"]').forEach(function(form) {
+    if (!form.querySelector('input[name="csrf_token"]')) {
+        var token = document.querySelector('meta[name="csrf-token"]')?.content || '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
+        if (token) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'csrf_token';
+            input.value = token;
+            form.appendChild(input);
+        }
+    }
+});
+</script>
 <script>
 // Sidebar mobile toggle
 document.getElementById('sidebarToggle')?.addEventListener('click', function() {

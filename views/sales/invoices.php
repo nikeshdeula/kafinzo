@@ -52,7 +52,11 @@
                 <td>
                     <div class="d-flex gap-1">
                         <a href="/sales/invoices/edit?id=<?= $inv['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                        <a href="/sales/invoices/delete?id=<?= $inv['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this invoice?')"><i class="bi bi-trash"></i></a>
+                        <form method="POST" action="/sales/invoices/delete" style="display:inline" onsubmit="return confirm('Delete this invoice?')">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                            <input type="hidden" name="id" value="<?= $inv['id'] ?>">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
                     </div>
                 </td>
             </tr>

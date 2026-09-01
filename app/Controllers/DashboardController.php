@@ -2,14 +2,16 @@
 
 namespace App\Controllers;
 
-class DashboardController
+class DashboardController extends BaseController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->requireAuth();
+    }
+
     public function index()
     {
-        if (!isset($_SESSION['user_id'])) {
-            redirect('/login');
-        }
-        
         return view('dashboard/index', [
             'title' => 'Dashboard',
             'userName' => $_SESSION['user_name'] ?? 'User'

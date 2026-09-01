@@ -31,7 +31,11 @@
                 <td><?= htmlspecialchars($cat['description'] ?? '—') ?></td>
                 <td class="text-end">
                     <a href="/inventory/categories/edit?id=<?= $cat['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                    <a href="/inventory/categories/delete?id=<?= $cat['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this category?')"><i class="bi bi-trash"></i></a>
+                    <form method="POST" action="/inventory/categories/delete" style="display:inline" onsubmit="return confirm('Delete this category?')">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                        <input type="hidden" name="id" value="<?= $cat['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
                 </td>
             </tr>
             <?php endforeach; ?>

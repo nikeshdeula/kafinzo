@@ -11,6 +11,7 @@ class ApiController extends BaseController
 
     public function nepaliDate()
     {
+        $this->requireAuth();
         header('Content-Type: application/json');
         $date = $_GET['date'] ?? date('Y-m-d');
         $bs = \ad_to_bs($date);

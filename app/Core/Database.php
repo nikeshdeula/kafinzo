@@ -19,7 +19,7 @@ class Database
         try {
             $this->connection = new PDO($dsn, $config['user'], $config['password'], $config['options']);
         } catch (PDOException $e) {
-            die("Database Connection failed: " . $e->getMessage());
+            die("A database error occurred. Please try again later.");
         }
     }
 

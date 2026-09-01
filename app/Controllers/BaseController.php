@@ -12,6 +12,14 @@ class BaseController
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
+        // Validate CSRF on all POST/DELETE/PATCH/PUT requests
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+            if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+                http_response_code(403);
+                die('Invalid CSRF token.');
+            }
+        }
         if (file_exists(BASE_PATH . 'app/Core/helpers.php')) {
             require_once BASE_PATH . 'app/Core/helpers.php';
         }
@@ -20,6 +28,15 @@ class BaseController
         }
         if (file_exists(BASE_PATH . 'app/Core/nepali_date.php')) {
             require_once BASE_PATH . 'app/Core/nepali_date.php';
+        }
+    }
+
+    protected function requireCsrf()
+    {
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+            http_response_code(403);
+            die('Invalid CSRF token.');
         }
     }
 

@@ -55,6 +55,10 @@ class SalesBillController extends BaseController {
                 foreach ($_POST['items'] as $item) {
                     $qty = (float)($item['quantity'] ?? 0);
                     $price = (float)($item['unit_price'] ?? 0);
+                    if ($qty <= 0 || $price < 0) {
+                        $_SESSION['error'] = 'Quantity must be positive and price cannot be negative.';
+                        redirect('/sales/bills/create');
+                    }
                     $discount = (float)($item['discount_pct'] ?? 0);
                     $tax = (float)($item['tax_rate'] ?? 0) ?: (float)\tax_rate();
                     $amount = $qty * $price * (1 - $discount / 100);

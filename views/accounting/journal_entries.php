@@ -46,11 +46,11 @@
                         <a href="/accounting/journal-entries/edit?id=<?= $j['id'] ?>" class="btn btn-sm btn-outline-primary me-1">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a href="/accounting/journal-entries/delete?id=<?= $j['id'] ?>"
-                           class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Delete this journal entry?')">
-                            <i class="bi bi-trash"></i>
-                        </a>
+                        <form method="POST" action="/accounting/journal-entries/delete" style="display:inline" onsubmit="return confirm('Delete this journal entry?')">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                            <input type="hidden" name="id" value="<?= $j['id'] ?>">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; ?>

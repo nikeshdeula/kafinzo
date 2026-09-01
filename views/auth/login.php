@@ -9,17 +9,18 @@
 
         <?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger">
-                <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+                <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
             </div>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success">
-                <?= $_SESSION['success']; unset($_SESSION['success']); ?>
+                <?= htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
             </div>
         <?php endif; ?>
 
         <form action="/login" method="POST">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
             <div class="mb-3">
                 <label class="form-label">Email Address</label>
                 <input type="email" name="email" class="form-control" required>
@@ -32,8 +33,8 @@
                 <input type="password" name="password" class="form-control" required>
             </div>
             <div class="mb-4 form-check">
-                <input type="checkbox" class="form-check-input" id="rememberMe">
-                <label class="form-check-label" for="rememberMe">Remember me</label>
+                <input type="checkbox" class="form-check-input" id="rememberMe" disabled>
+                <label class="form-check-label text-muted" for="rememberMe">Remember me (coming soon)</label>
             </div>
             <button type="submit" class="btn btn-primary w-100">Sign In</button>
         </form>

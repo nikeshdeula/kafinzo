@@ -42,8 +42,12 @@
                     <?php endif; ?>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick='openUserModal(<?= json_encode($u) ?>)'><i class="bi bi-pencil"></i></button>
-                    <a href="/settings/users/delete?id=<?= $u['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this user?')"><i class="bi bi-trash"></i></a>
+                    <button class="btn btn-sm btn-outline-primary" onclick='openUserModal(JSON.parse(this.dataset.user))' data-user='<?= htmlspecialchars(json_encode($u), ENT_QUOTES) ?>'><i class="bi bi-pencil"></i></button>
+                    <form method="POST" action="/settings/users/delete" style="display:inline" onsubmit="return confirm('Delete this user?')">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                        <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
                 </td>
             </tr>
             <?php endforeach; ?>

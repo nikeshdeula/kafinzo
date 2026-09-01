@@ -13,8 +13,10 @@ class Account
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function getAllGroupedByType(int $businessId = 1): array
+    public function getAllGroupedByType(int $businessId = 0): array
     {
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        if ($businessId === 0) return [];
         $stmt = $this->db->prepare(
             "SELECT * FROM accounts WHERE business_id = :bid ORDER BY code ASC"
         );
@@ -45,7 +47,7 @@ class Account
              VALUES (:business_id, :code, :name, :type, :sub_type, :description, :is_active, :opening_balance)"
         );
         return $stmt->execute([
-            'business_id'     => $data['business_id'] ?? 1,
+            'business_id'     => $data['business_id'] ?? ($_SESSION['business_id'] ?? 0),
             'code'            => $data['code'],
             'name'            => $data['name'],
             'type'            => $data['type'],
@@ -83,8 +85,10 @@ class Account
         ]);
     }
 
-    public function codeExists(string $code, int $businessId = 1, int $excludeId = 0): bool
+    public function codeExists(string $code, int $businessId = 0, int $excludeId = 0): bool
     {
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        if ($businessId === 0) return false;
         $stmt = $this->db->prepare(
             "SELECT id FROM accounts WHERE code = :code AND business_id = :bid AND id != :exclude LIMIT 1"
         );
@@ -92,8 +96,10 @@ class Account
         return (bool) $stmt->fetch();
     }
 
-    public function getForSelect(int $businessId = 1): array
+    public function getForSelect(int $businessId = 0): array
     {
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        if ($businessId === 0) return [];
         $stmt = $this->db->prepare(
             "SELECT id, code, name, type FROM accounts WHERE business_id = :bid AND sub_type != 'group' AND is_active = 1 ORDER BY code ASC"
         );

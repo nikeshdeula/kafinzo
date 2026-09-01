@@ -37,7 +37,7 @@ class Quotation {
 
     public function delete(int $id, int $bid = 0): bool {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
-        $this->db->prepare("DELETE FROM quotation_items WHERE quotation_id=:id")->execute(['id'=>$id]);
+        $this->db->prepare("DELETE FROM quotation_items WHERE quotation_id=:id AND EXISTS (SELECT 1 FROM quotations WHERE id=:id2 AND business_id=:bid)")->execute(['id'=>$id,'id2'=>$id,'bid'=>$bid]);
         $s = $this->db->prepare("DELETE FROM quotations WHERE id=:id AND business_id=:bid");
         return $s->execute(['id'=>$id,'bid'=>$bid]);
     }

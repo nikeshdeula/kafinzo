@@ -50,7 +50,11 @@
                     <div class="d-flex gap-1">
                         <a href="/sales/quotations/edit?id=<?= $q['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
                         <a href="/sales/quotations/convert?id=<?= $q['id'] ?>" class="btn btn-sm btn-outline-success" title="Convert to Invoice" onclick="return confirm('Convert this quotation to an invoice?')"><i class="bi bi-receipt"></i></a>
-                        <a href="/sales/quotations/delete?id=<?= $q['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this quotation?')"><i class="bi bi-trash"></i></a>
+                        <form method="POST" action="/sales/quotations/delete" style="display:inline" onsubmit="return confirm('Delete this quotation?')">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                            <input type="hidden" name="id" value="<?= $q['id'] ?>">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
                     </div>
                 </td>
             </tr>

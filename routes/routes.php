@@ -40,14 +40,14 @@ $router->get('/sales/invoices/create', 'Sales\InvoiceController@create');
 $router->post('/sales/invoices/create', 'Sales\InvoiceController@create');
 $router->get('/sales/invoices/edit', 'Sales\InvoiceController@edit');
 $router->post('/sales/invoices/edit', 'Sales\InvoiceController@edit');
-$router->get('/sales/invoices/delete', 'Sales\InvoiceController@delete');
+$router->post('/sales/invoices/delete', 'Sales\InvoiceController@delete');
 
 $router->get('/sales/quotations', 'Sales\QuotationController@index');
 $router->get('/sales/quotations/create', 'Sales\QuotationController@create');
 $router->post('/sales/quotations/create', 'Sales\QuotationController@create');
 $router->get('/sales/quotations/edit', 'Sales\QuotationController@edit');
 $router->post('/sales/quotations/edit', 'Sales\QuotationController@edit');
-$router->get('/sales/quotations/delete', 'Sales\QuotationController@delete');
+$router->post('/sales/quotations/delete', 'Sales\QuotationController@delete');
 $router->get('/sales/quotations/convert', 'Sales\QuotationController@convert');
 
 $router->get('/sales/payments', 'Sales\SalesPaymentController@index');
@@ -88,7 +88,7 @@ $router->get('/inventory/products/create', 'Inventory\ProductController@create')
 $router->post('/inventory/products/create', 'Inventory\ProductController@create');
 $router->get('/inventory/products/edit', 'Inventory\ProductController@edit');
 $router->post('/inventory/products/edit', 'Inventory\ProductController@edit');
-$router->get('/inventory/products/delete', 'Inventory\ProductController@delete');
+$router->post('/inventory/products/delete', 'Inventory\ProductController@delete');
 
 // Inventory — Categories
 $router->get('/inventory/categories', 'Inventory\CategoryController@index');
@@ -96,7 +96,7 @@ $router->get('/inventory/categories/create', 'Inventory\CategoryController@creat
 $router->post('/inventory/categories/create', 'Inventory\CategoryController@create');
 $router->get('/inventory/categories/edit', 'Inventory\CategoryController@edit');
 $router->post('/inventory/categories/edit', 'Inventory\CategoryController@edit');
-$router->get('/inventory/categories/delete', 'Inventory\CategoryController@delete');
+$router->post('/inventory/categories/delete', 'Inventory\CategoryController@delete');
 
 // Inventory — Warehouses
 $router->get('/inventory/warehouses', 'Inventory\WarehouseController@index');
@@ -104,7 +104,7 @@ $router->get('/inventory/warehouses/create', 'Inventory\WarehouseController@crea
 $router->post('/inventory/warehouses/create', 'Inventory\WarehouseController@create');
 $router->get('/inventory/warehouses/edit', 'Inventory\WarehouseController@edit');
 $router->post('/inventory/warehouses/edit', 'Inventory\WarehouseController@edit');
-$router->get('/inventory/warehouses/delete', 'Inventory\WarehouseController@delete');
+$router->post('/inventory/warehouses/delete', 'Inventory\WarehouseController@delete');
 
 // Inventory — Stock Movement
 $router->get('/inventory/stock-movement', 'Inventory\StockController@index');
@@ -133,7 +133,7 @@ $router->get('/accounting/journal-entries/create', 'Accounting\JournalController
 $router->post('/accounting/journal-entries/create', 'Accounting\JournalController@create');
 $router->get('/accounting/journal-entries/edit', 'Accounting\JournalController@edit');
 $router->post('/accounting/journal-entries/edit', 'Accounting\JournalController@edit');
-$router->get('/accounting/journal-entries/delete', 'Accounting\JournalController@delete');
+$router->post('/accounting/journal-entries/delete', 'Accounting\JournalController@delete');
 $router->get('/accounting/general-ledger', 'Accounting\LedgerController@index');
 $router->get('/accounting/trial-balance', 'Accounting\TrialBalanceController@index');
 
@@ -152,10 +152,10 @@ $router->post('/settings/business', 'SettingsController@business');
 $router->get('/settings/users', 'SettingsController@users');
 $router->post('/settings/users/create', 'SettingsController@createUser');
 $router->post('/settings/users/edit', 'SettingsController@editUser');
-$router->get('/settings/users/delete', 'SettingsController@deleteUser');
+$router->post('/settings/users/delete', 'SettingsController@deleteUser');
 $router->get('/settings/roles', 'SettingsController@roles');
 $router->post('/settings/roles', 'SettingsController@roles');
-$router->get('/settings/roles/delete', 'SettingsController@deleteRole');
+$router->post('/settings/roles/delete', 'SettingsController@deleteRole');
 $router->get('/settings/tax', 'SettingsController@tax');
 $router->post('/settings/tax', 'SettingsController@tax');
 

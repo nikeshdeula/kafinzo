@@ -81,6 +81,7 @@
                     <a href="/purchases/orders/edit?id=<?= $o['id'] ?>" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></a>
                     <a href="/purchases/orders/convert?id=<?= $o['id'] ?>" class="btn btn-sm btn-outline-success me-1" title="Convert to Bill" onclick="return confirm('Convert this order to a bill?')"><i class="bi bi-file-earmark-minus"></i></a>
                     <form method="POST" action="/purchases/orders/delete" class="d-inline" onsubmit="return confirm('Delete this order?')">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <input type="hidden" name="id" value="<?= $o['id'] ?>">
                         <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                     </form>

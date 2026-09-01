@@ -62,7 +62,7 @@ class PurchaseBill {
 
     public function delete(int $id, int $bid = 0): bool {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
-        $this->db->prepare("DELETE FROM purchase_bill_items WHERE purchase_bill_id=:id")->execute(['id'=>$id]);
+        $this->db->prepare("DELETE FROM purchase_bill_items WHERE purchase_bill_id=:id AND EXISTS (SELECT 1 FROM purchase_bills WHERE id=:id2 AND business_id=:bid)")->execute(['id'=>$id,'id2'=>$id,'bid'=>$bid]);
         $s = $this->db->prepare("DELETE FROM purchase_bills WHERE id=:id AND business_id=:bid");
         return $s->execute(['id'=>$id,'bid'=>$bid]);
     }
@@ -76,7 +76,8 @@ class PurchaseBill {
     }
 
     public function saveItems(int $bill_id, array $items): void {
-        $this->db->prepare("DELETE FROM purchase_bill_items WHERE purchase_bill_id=:bid")->execute(['bid'=>$bill_id]);
+        $bid = $_SESSION['business_id'] ?? 0;
+        $this->db->prepare("DELETE FROM purchase_bill_items WHERE purchase_bill_id=:bid AND EXISTS (SELECT 1 FROM purchase_bills WHERE id=:bid2 AND business_id=:biz)")->execute(['bid'=>$bill_id,'bid2'=>$bill_id,'biz'=>$bid]);
         $s = $this->db->prepare("INSERT INTO purchase_bill_items (purchase_bill_id,product_id,description,quantity,unit_price,discount_pct,tax_rate,amount) VALUES (:bid,:pid,:desc,:qty,:price,:disc,:tax,:amt)");
         foreach ($items as $item) {
             $s->execute([
