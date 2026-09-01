@@ -278,12 +278,11 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0" id="itemsTable">
                     <thead class="table-light"><tr>
-                        <th style="width:40%">Product / Description</th>
+                        <th style="width:42%">Product / Description</th>
                         <th style="width:10%" class="text-center">Qty</th>
-                        <th style="width:13%" class="text-end">Price</th>
-                        <th style="width:8%" class="text-center">Disc %</th>
-                        <th style="width:8%" class="text-center">Tax %</th>
-                        <th style="width:13%" class="text-end">Amount</th>
+                        <th style="width:15%" class="text-end">Price</th>
+                        <th style="width:10%" class="text-center">Disc %</th>
+                        <th style="width:15%" class="text-end">Amount</th>
                         <th style="width:8%" class="text-center">Action</th>
                     </tr></thead>
                     <tbody>
@@ -301,7 +300,6 @@
                             <td class="text-center"><input type="number" name="items[<?= $idx ?>][quantity]" class="form-control form-control-sm item-qty text-center" value="<?= htmlspecialchars($item['quantity'] ?? 1) ?>" min="0" step="0.01"></td>
                             <td class="text-end"><input type="number" name="items[<?= $idx ?>][unit_price]" class="form-control form-control-sm item-price text-end" value="<?= htmlspecialchars($item['unit_price'] ?? 0) ?>" min="0" step="0.01"></td>
                             <td class="text-center"><input type="number" name="items[<?= $idx ?>][discount_pct]" class="form-control form-control-sm item-discount text-center" value="<?= htmlspecialchars($item['discount_pct'] ?? 0) ?>" min="0" step="0.01"></td>
-                            <td class="text-center"><input type="number" name="items[<?= $idx ?>][tax_rate]" class="form-control form-control-sm item-tax text-center" value="<?= htmlspecialchars($item['tax_rate'] ?: $taxRate) ?>" min="0" step="0.01" readonly></td>
                             <td class="text-end fw-600 item-amount">NPR <?= number_format($item['amount'] ?? 0, 2) ?></td>
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItemRow(this)" style="padding: 2px 4px;"><i class="bi bi-trash"></i></button></td>
                         </tr>
@@ -319,7 +317,6 @@
                             <td class="text-center"><input type="number" name="items[0][quantity]" class="form-control form-control-sm item-qty text-center" value="1" min="0" step="0.01"></td>
                             <td class="text-end"><input type="number" name="items[0][unit_price]" class="form-control form-control-sm item-price text-end" value="0" min="0" step="0.01"></td>
                             <td class="text-center"><input type="number" name="items[0][discount_pct]" class="form-control form-control-sm item-discount text-center" value="0" min="0" step="0.01"></td>
-                            <td class="text-center"><input type="number" name="items[0][tax_rate]" class="form-control form-control-sm item-tax text-center" value="<?= htmlspecialchars($taxRate) ?>" min="0" step="0.01" readonly></td>
                             <td class="text-end fw-600 item-amount">NPR 0.00</td>
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItemRow(this)" style="padding: 2px 4px;"><i class="bi bi-trash"></i></button></td>
                         </tr>
@@ -497,7 +494,6 @@ function addItemRow() {
     <td><input type="number" name="items[${itemIndex}][quantity]" class="form-control form-control-sm item-qty" value="1" min="0" step="0.01"></td>
     <td><input type="number" name="items[${itemIndex}][unit_price]" class="form-control form-control-sm item-price" value="0" min="0" step="0.01"></td>
     <td><input type="number" name="items[${itemIndex}][discount_pct]" class="form-control form-control-sm item-discount" value="0" min="0" step="0.01"></td>
-    <td><input type="number" name="items[${itemIndex}][tax_rate]" class="form-control form-control-sm item-tax" value="${defaultTax}" min="0" step="0.01" readonly></td>
     <td class="text-end fw-600 item-amount">NPR 0.00</td>
     <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItemRow(this)"><i class="bi bi-x"></i></button></td>`;
     tbody.appendChild(row);
@@ -513,38 +509,37 @@ function removeItemRow(btn) {
     }
 }
 function attachRowListeners(row) {
-    row.querySelectorAll('.item-qty, .item-price, .item-discount, .item-tax').forEach(el => {
+    row.querySelectorAll('.item-qty, .item-price, .item-discount').forEach(el => {
         el.addEventListener('input', calculateTotals);
     });
 }
 document.querySelectorAll('#itemsTable tbody tr').forEach(attachRowListeners);
 function calculateTotals() {
-    let subtotal = 0, discount = 0, tax = 0, total = 0;
+    let subtotal = 0, discount = 0;
     document.querySelectorAll('#itemsTable tbody tr').forEach(row => {
         const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
         const price = parseFloat(row.querySelector('.item-price').value) || 0;
         const disc = parseFloat(row.querySelector('.item-discount').value) || 0;
-        const taxRate = parseFloat(row.querySelector('.item-tax').value) || 0;
         const lineSub = qty * price;
         const lineDisc = lineSub * (disc / 100);
-        const lineTax = (lineSub - lineDisc) * (taxRate / 100);
-        const lineTotal = lineSub - lineDisc + lineTax;
+        const lineTotal = lineSub - lineDisc;
         subtotal += lineSub;
         discount += lineDisc;
-        tax += lineTax;
-        total += lineTotal;
         row.querySelector('.item-amount').textContent = 'NPR ' + lineTotal.toFixed(2);
     });
+    const taxableAmount = subtotal - discount;
+    const tax = taxableAmount * (defaultTax / 100);
+    const total = taxableAmount + tax;
     const tds = total * 0.015;
     const grandTotal = total - tds;
     document.getElementById('subtotalDisplay').textContent = 'NPR ' + subtotal.toFixed(2);
     document.getElementById('discountDisplay').textContent = 'NPR ' + discount.toFixed(2);
-    document.getElementById('taxDisplay').textContent = 'NPR ' + tax.toFixed(2);
+    document.getElementById('taxDisplay').textContent = 'NPR ' + tax.toFixed(2) + ' (' + defaultTax + '%)';
     document.getElementById('totalDisplay').textContent = 'NPR ' + total.toFixed(2);
     document.getElementById('tdsDisplay').textContent = 'NPR ' + tds.toFixed(2);
     document.getElementById('grandTotalDisplay').textContent = 'NPR ' + grandTotal.toFixed(2);
 }
-document.querySelectorAll('.item-qty, .item-price, .item-discount, .item-tax').forEach(el => {
+document.querySelectorAll('.item-qty, .item-price, .item-discount').forEach(el => {
     el.addEventListener('input', calculateTotals);
 });
 calculateTotals();

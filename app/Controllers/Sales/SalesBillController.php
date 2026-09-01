@@ -49,6 +49,7 @@ class SalesBillController extends BaseController {
             $discount_amount = 0;
             $total_amount = 0;
             $tds_amount = 0;
+            $taxRate = (float)\tax_rate();
             $items = [];
 
             if (!empty($_POST['items'])) {
@@ -60,15 +61,10 @@ class SalesBillController extends BaseController {
                         redirect('/sales/bills/create');
                     }
                     $discount = (float)($item['discount_pct'] ?? 0);
-                    $tax = (float)($item['tax_rate'] ?? 0) ?: (float)\tax_rate();
                     $amount = $qty * $price * (1 - $discount / 100);
-                    $tax_val = $amount * ($tax / 100);
-                    $line_total = $amount + $tax_val;
 
                     $subtotal += $qty * $price;
                     $discount_amount += $qty * $price * ($discount / 100);
-                    $tax_amount += $tax_val;
-                    $total_amount += $line_total;
 
                     $items[] = [
                         'product_id' => !empty($item['product_id']) ? (int)$item['product_id'] : null,
@@ -76,12 +72,15 @@ class SalesBillController extends BaseController {
                         'quantity' => $qty,
                         'unit_price' => $price,
                         'discount_pct' => $discount,
-                        'tax_rate' => $tax,
-                        'amount' => $line_total
+                        'tax_rate' => $taxRate,
+                        'amount' => $amount
                     ];
                 }
             }
 
+            $taxableAmount = $subtotal - $discount_amount;
+            $tax_amount = $taxableAmount * ($taxRate / 100);
+            $total_amount = $taxableAmount + $tax_amount;
             $tds_amount = $total_amount * 0.015;
 
             $bill_id = $this->model->create([
@@ -138,6 +137,7 @@ class SalesBillController extends BaseController {
             $discount_amount = 0;
             $total_amount = 0;
             $tds_amount = 0;
+            $taxRate = (float)\tax_rate();
             $items = [];
 
             if (!empty($_POST['items'])) {
@@ -145,15 +145,10 @@ class SalesBillController extends BaseController {
                     $qty = (float)($item['quantity'] ?? 0);
                     $price = (float)($item['unit_price'] ?? 0);
                     $discount = (float)($item['discount_pct'] ?? 0);
-                    $tax = (float)($item['tax_rate'] ?? 0) ?: (float)\tax_rate();
                     $amount = $qty * $price * (1 - $discount / 100);
-                    $tax_val = $amount * ($tax / 100);
-                    $line_total = $amount + $tax_val;
 
                     $subtotal += $qty * $price;
                     $discount_amount += $qty * $price * ($discount / 100);
-                    $tax_amount += $tax_val;
-                    $total_amount += $line_total;
 
                     $items[] = [
                         'product_id' => !empty($item['product_id']) ? (int)$item['product_id'] : null,
@@ -161,12 +156,15 @@ class SalesBillController extends BaseController {
                         'quantity' => $qty,
                         'unit_price' => $price,
                         'discount_pct' => $discount,
-                        'tax_rate' => $tax,
-                        'amount' => $line_total
+                        'tax_rate' => $taxRate,
+                        'amount' => $amount
                     ];
                 }
             }
 
+            $taxableAmount = $subtotal - $discount_amount;
+            $tax_amount = $taxableAmount * ($taxRate / 100);
+            $total_amount = $taxableAmount + $tax_amount;
             $tds_amount = $total_amount * 0.015;
 
             $this->model->update($id, [
