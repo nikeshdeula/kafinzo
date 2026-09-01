@@ -375,6 +375,7 @@
             <div class="modal-body">
                 <div class="alert alert-danger modal-error" id="quickCreateError"></div>
                 <form id="quickCustomerForm" class="quick-create-form" data-endpoint="/sales/customers/create?modal=1">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Customer Name <span class="text-danger">*</span></label>
@@ -408,6 +409,7 @@
                     <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-save me-1"></i> Save Customer</button>
                 </form>
                 <form id="quickProductForm" class="quick-create-form" style="display:none" data-endpoint="/inventory/products/create?modal=1">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Product / Service Name <span class="text-danger">*</span></label>
                         <input type="text" name="name" class="form-control" required>
