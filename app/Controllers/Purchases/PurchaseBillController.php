@@ -51,22 +51,22 @@ class PurchaseBillController extends BaseController {
             $tax_amount = 0;
             $discount_amount = 0;
             $total_amount = 0;
+            $taxRate = (float)\tax_rate();
             $items = [];
 
             if (!empty($_POST['items'])) {
                 foreach ($_POST['items'] as $item) {
                     $qty = (float)($item['quantity'] ?? 0);
                     $price = (float)($item['unit_price'] ?? 0);
+                    if ($qty <= 0 || $price < 0) {
+                        $_SESSION['error'] = 'Quantity must be positive and price cannot be negative.';
+                        redirect('/purchases/bills/create');
+                    }
                     $discount = (float)($item['discount_pct'] ?? 0);
-                    $tax = (float)($item['tax_rate'] ?? 0) ?: (float)\tax_rate();
                     $amount = $qty * $price * (1 - $discount / 100);
-                    $tax_val = $amount * ($tax / 100);
-                    $line_total = $amount + $tax_val;
 
                     $subtotal += $qty * $price;
                     $discount_amount += $qty * $price * ($discount / 100);
-                    $tax_amount += $tax_val;
-                    $total_amount += $line_total;
 
                     $items[] = [
                         'product_id' => !empty($item['product_id']) ? (int)$item['product_id'] : null,
@@ -74,11 +74,15 @@ class PurchaseBillController extends BaseController {
                         'quantity' => $qty,
                         'unit_price' => $price,
                         'discount_pct' => $discount,
-                        'tax_rate' => $tax,
-                        'amount' => $line_total
+                        'tax_rate' => $taxRate,
+                        'amount' => $amount
                     ];
                 }
             }
+
+            $taxableAmount = $subtotal - $discount_amount;
+            $tax_amount = $taxableAmount * ($taxRate / 100);
+            $total_amount = $taxableAmount + $tax_amount;
 
             $bill_id = $this->model->create([
                 'business_id' => $this->businessId(),
@@ -132,6 +136,7 @@ class PurchaseBillController extends BaseController {
             $tax_amount = 0;
             $discount_amount = 0;
             $total_amount = 0;
+            $taxRate = (float)\tax_rate();
             $items = [];
 
             if (!empty($_POST['items'])) {
@@ -139,15 +144,10 @@ class PurchaseBillController extends BaseController {
                     $qty = (float)($item['quantity'] ?? 0);
                     $price = (float)($item['unit_price'] ?? 0);
                     $discount = (float)($item['discount_pct'] ?? 0);
-                    $tax = (float)($item['tax_rate'] ?? 0) ?: (float)\tax_rate();
                     $amount = $qty * $price * (1 - $discount / 100);
-                    $tax_val = $amount * ($tax / 100);
-                    $line_total = $amount + $tax_val;
 
                     $subtotal += $qty * $price;
                     $discount_amount += $qty * $price * ($discount / 100);
-                    $tax_amount += $tax_val;
-                    $total_amount += $line_total;
 
                     $items[] = [
                         'product_id' => !empty($item['product_id']) ? (int)$item['product_id'] : null,
@@ -155,11 +155,15 @@ class PurchaseBillController extends BaseController {
                         'quantity' => $qty,
                         'unit_price' => $price,
                         'discount_pct' => $discount,
-                        'tax_rate' => $tax,
-                        'amount' => $line_total
+                        'tax_rate' => $taxRate,
+                        'amount' => $amount
                     ];
                 }
             }
+
+            $taxableAmount = $subtotal - $discount_amount;
+            $tax_amount = $taxableAmount * ($taxRate / 100);
+            $total_amount = $taxableAmount + $tax_amount;
 
             $this->model->update($id, [
                 'supplier_id' => $supplier_id,
