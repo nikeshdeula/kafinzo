@@ -24,7 +24,7 @@ class JournalEntry
 
     public function find(int $id, int $businessId = 0): array|false
     {
-        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 1;
         $stmt = $this->db->prepare("SELECT * FROM journal_entries WHERE id = :id AND business_id = :bid LIMIT 1");
         $stmt->execute(['id' => $id, 'bid' => $businessId]);
         return $stmt->fetch();
@@ -48,7 +48,7 @@ class JournalEntry
 
     public function update(int $id, array $data, int $businessId = 0): bool
     {
-        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 1;
         $stmt = $this->db->prepare(
             "UPDATE journal_entries SET entry_date = :entry_date, description = :description, reference = :reference
              WHERE id = :id AND business_id = :bid"
@@ -64,7 +64,7 @@ class JournalEntry
 
     public function delete(int $id, int $businessId = 0): bool
     {
-        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 1;
         $stmt = $this->db->prepare("DELETE FROM journal_entries WHERE id = :id AND business_id = :bid");
         $stmt->execute(['id' => $id, 'bid' => $businessId]);
         return true;

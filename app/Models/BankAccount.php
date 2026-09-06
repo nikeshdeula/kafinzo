@@ -11,17 +11,17 @@ class BankAccount {
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
     public function find(int $id, int $bid = 0): array|false {
-        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT * FROM bank_accounts WHERE id=:id AND business_id=:bid LIMIT 1");
         $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
     public function create(array $d): int {
         $s=$this->db->prepare("INSERT INTO bank_accounts (business_id,account_type,bank_name,account_name,account_number,branch,opening_balance,current_balance) VALUES (:bid,:type,:bank,:name,:num,:branch,:opening,:current)");
-        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??0),'type'=>$d['account_type']??'bank','bank'=>$d['bank_name']??null,'name'=>$d['account_name'],'num'=>$d['account_number']??null,'branch'=>$d['branch']??null,'opening'=>$d['opening_balance']??0,'current'=>$d['opening_balance']??0]);
+        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??1),'type'=>$d['account_type']??'bank','bank'=>$d['bank_name']??null,'name'=>$d['account_name'],'num'=>$d['account_number']??null,'branch'=>$d['branch']??null,'opening'=>$d['opening_balance']??0,'current'=>$d['opening_balance']??0]);
         return (int)$this->db->lastInsertId();
     }
     public function transactions(int $accountId, int $bid = 0): array {
-        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT * FROM bank_transactions WHERE bank_account_id=:id AND business_id=:bid ORDER BY transaction_date DESC LIMIT 50");
         $s->execute(['id'=>$accountId,'bid'=>$bid]); return $s->fetchAll();
     }

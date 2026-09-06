@@ -47,7 +47,7 @@ class LedgerEntry
 
     public function getByJournal(int $journalEntryId, int $businessId = 0): array
     {
-        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 1;
         $stmt = $this->db->prepare(
             "SELECT le.*, a.code, a.name as account_name
              FROM ledger_entries le
@@ -77,7 +77,7 @@ class LedgerEntry
 
     public function deleteByJournal(int $journalEntryId, int $businessId = 0): bool
     {
-        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 0;
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 1;
         $stmt = $this->db->prepare("DELETE FROM ledger_entries WHERE journal_entry_id = :jid AND business_id = :bid");
         $stmt->execute(['jid' => $journalEntryId, 'bid' => $businessId]);
         return true;

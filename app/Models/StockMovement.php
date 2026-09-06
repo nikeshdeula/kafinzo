@@ -39,7 +39,7 @@ class StockMovement {
     }
 
     public function find(int $id, int $bid = 0): array|false {
-        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s = $this->db->prepare("SELECT * FROM stock_movements WHERE id=:id AND business_id=:bid LIMIT 1");
         $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }

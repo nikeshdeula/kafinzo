@@ -19,7 +19,7 @@ class PurchaseOrder {
     }
 
     public function find(int $id, int $bid = 0): array|false {
-        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s = $this->db->prepare("SELECT * FROM purchase_orders WHERE id=:id AND business_id=:bid LIMIT 1");
         $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
@@ -36,7 +36,7 @@ class PurchaseOrder {
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO purchase_orders (business_id,supplier_id,order_number,order_date,expected_delivery,subtotal,tax_amount,discount_amount,total_amount,status,notes) VALUES (:bid,:sid,:on,:od,:ed,:sub,:tax,:disc,:tot,:st,:notes)");
         $s->execute([
-            'bid'=>$d['business_id']??($_SESSION['business_id']??0),
+            'bid'=>$d['business_id']??($_SESSION['business_id']??1),
             'sid'=>$d['supplier_id'],
             'on'=>$d['order_number'],
             'od'=>$d['order_date'],
@@ -52,7 +52,7 @@ class PurchaseOrder {
     }
 
     public function update(int $id, array $d, int $bid = 0): bool {
-        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s = $this->db->prepare("UPDATE purchase_orders SET supplier_id=:sid,order_number=:on,order_date=:od,expected_delivery=:ed,subtotal=:sub,tax_amount=:tax,discount_amount=:disc,total_amount=:tot,status=:st,notes=:notes WHERE id=:id AND business_id=:bid");
         return $s->execute([
             'sid'=>$d['supplier_id'],'on'=>$d['order_number'],'od'=>$d['order_date'],'ed'=>$d['expected_delivery']??null,'sub'=>$d['subtotal']??0,'tax'=>$d['tax_amount']??0,'disc'=>$d['discount_amount']??0,'tot'=>$d['total_amount']??0,'st'=>$d['status']??'draft','notes'=>$d['notes']??null,'id'=>$id,'bid'=>$bid
@@ -60,7 +60,7 @@ class PurchaseOrder {
     }
 
     public function delete(int $id, int $bid = 0): bool {
-        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $this->db->prepare("DELETE FROM purchase_order_items WHERE purchase_order_id=:id AND EXISTS (SELECT 1 FROM purchase_orders WHERE id=:id2 AND business_id=:bid)")->execute(['id'=>$id,'id2'=>$id,'bid'=>$bid]);
         $s = $this->db->prepare("DELETE FROM purchase_orders WHERE id=:id AND business_id=:bid");
         return $s->execute(['id'=>$id,'bid'=>$bid]);
@@ -75,7 +75,7 @@ class PurchaseOrder {
     }
 
     public function saveItems(int $order_id, array $items): void {
-        $bid = $_SESSION['business_id'] ?? 0;
+        $bid = $_SESSION['business_id'] ?? 1;
         $this->db->prepare("DELETE FROM purchase_order_items WHERE purchase_order_id=:oid AND EXISTS (SELECT 1 FROM purchase_orders WHERE id=:oid2 AND business_id=:bid)")->execute(['oid'=>$order_id,'oid2'=>$order_id,'bid'=>$bid]);
         $s = $this->db->prepare("INSERT INTO purchase_order_items (purchase_order_id,product_id,description,quantity,unit_price,discount_pct,tax_rate,amount) VALUES (:oid,:pid,:desc,:qty,:price,:disc,:tax,:amt)");
         foreach ($items as $item) {

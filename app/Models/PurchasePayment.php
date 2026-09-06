@@ -14,7 +14,7 @@ class PurchasePayment {
     }
 
     public function find(int $id, int $bid = 0): array|false {
-        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 0;
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s = $this->db->prepare("SELECT * FROM purchase_payments WHERE id=:id AND business_id=:bid LIMIT 1");
         $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
@@ -22,7 +22,7 @@ class PurchasePayment {
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO purchase_payments (business_id,bill_id,order_id,supplier_id,payment_number,payment_date,amount,payment_method,reference,notes) VALUES (:bid,:bill_id,:order_id,:sid,:pn,:pd,:amt,:pm,:ref,:notes)");
         $s->execute([
-            'bid'=>$d['business_id']??($_SESSION['business_id']??0),
+            'bid'=>$d['business_id']??($_SESSION['business_id']??1),
             'bill_id'=>$d['bill_id']??null,
             'order_id'=>$d['order_id']??null,
             'sid'=>$d['supplier_id'],

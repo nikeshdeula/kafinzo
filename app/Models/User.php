@@ -7,7 +7,7 @@ class User {
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
     public function all(): array {
-        $bid = $_SESSION['business_id'] ?? 0;
+        $bid = $_SESSION['business_id'] ?? 1;
         if ($bid > 0) {
             $s = $this->db->prepare("SELECT u.*, GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', ') AS role_names FROM users u INNER JOIN business_users bu ON bu.user_id=u.id LEFT JOIN user_roles ur ON ur.user_id=u.id LEFT JOIN roles r ON r.id=ur.role_id WHERE bu.business_id=:bid GROUP BY u.id ORDER BY u.full_name ASC");
             $s->execute(['bid' => $bid]);
