@@ -49,4 +49,23 @@ class Product {
         $s = $this->db->prepare("DELETE FROM products WHERE id=:id AND business_id=:bid");
         return $s->execute(['id'=>$id,'bid'=>$bid]);
     }
+
+    public function countReferences(int $id): int {
+        $count = 0;
+        $tables = [
+            'sales_bill_items',
+            'purchase_bill_items',
+            'sales_order_items',
+            'purchase_order_items',
+            'invoice_items',
+            'quotation_items',
+        ];
+        foreach ($tables as $table) {
+            $col = 'product_id';
+            $s = $this->db->prepare("SELECT COUNT(*) FROM {$table} WHERE {$col}=:pid");
+            $s->execute(['pid'=>$id]);
+            $count += (int)$s->fetchColumn();
+        }
+        return $count;
+    }
 }

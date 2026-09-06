@@ -69,6 +69,11 @@ class ProductController extends BaseController {
         $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $product = $this->model->find($id);
         if (!$product) { $_SESSION['error'] = 'Product not found.'; redirect('/inventory/products'); }
+        $refs = $this->model->countReferences($id);
+        if ($refs > 0) {
+            $_SESSION['error'] = "Cannot delete '{$product['name']}' — it is used in {$refs} bill(s)/order(s). Remove it from all transactions first.";
+            redirect('/inventory/products');
+        }
         $this->model->delete($id);
         $_SESSION['success'] = "Product '{$product['name']}' deleted successfully.";
         redirect('/inventory/products');
