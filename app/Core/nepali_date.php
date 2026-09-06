@@ -394,12 +394,14 @@ if (!function_exists('nepali_date_picker')) {
                     }
                     document.getElementById("np_days_" + id).innerHTML = html;
                 }
-                document.addEventListener("click", function(e) {
-                    var cal = document.getElementById("cal_" + id);
-                    if (cal && cal.style.display === "block" && !cal.contains(e.target) && e.target !== document.getElementById(id) && !e.target.closest("button[onclick*=\"npOpenCalendar\"]")) {
-                        cal.style.display = "none";
-                    }
-                });
+                (function(npickerId) {
+                    document.addEventListener("click", function(e) {
+                        var cal = document.getElementById("cal_" + npickerId);
+                        if (cal && cal.style.display === "block" && !cal.contains(e.target) && e.target !== document.getElementById(npickerId) && !e.target.closest("button[onclick*=\"npOpenCalendar\"]")) {
+                            cal.style.display = "none";
+                        }
+                    });
+                })(' . $uniqueId . ');
                 </script>';
     }
 }

@@ -473,12 +473,21 @@ document.querySelectorAll('.quick-create-form').forEach(form => {
             const response = await fetch(form.dataset.endpoint, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
             const result = await response.json();
             if (!result.success) throw new Error(result.message || 'Unable to create record.');
-            const select = form.id === 'quickSupplierForm' ? document.querySelector('select[name="supplier_id"]') : document.querySelectorAll('select[name$="[product_id]"]');
-            const selects = form.id === 'quickSupplierForm' ? [select] : Array.from(select);
-            selects.forEach(target => {
-                const option = new Option(result.name, result.id, true, true);
-                target.add(option);
-            });
+            const select = form.id === 'quickSupplierForm' ? document.querySelector('select[name="supplier_id"]') : null;
+            const selects = form.id === 'quickSupplierForm' ? [select] : [];
+            if (form.id === 'quickSupplierForm') {
+                selects.forEach(target => {
+                    const option = new Option(result.name, result.id, true, true);
+                    target.add(option);
+                });
+            }
+            if (form.id === 'quickProductForm') {
+                const productSelects = document.querySelectorAll('select[name$="[product_id]"]');
+                productSelects.forEach(target => {
+                    const option = new Option(result.name, result.id, false, false);
+                    target.add(option);
+                });
+            }
             bootstrap.Modal.getInstance(document.getElementById('quickCreateModal')).hide();
             form.reset();
         } catch (requestError) {
