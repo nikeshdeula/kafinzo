@@ -56,7 +56,7 @@ class WarehouseController extends BaseController {
 
     public function delete() {
         $this->requireAuth();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $warehouse = $this->model->find($id);
         if ($warehouse) {
             $this->model->delete($id);

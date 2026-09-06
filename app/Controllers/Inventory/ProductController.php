@@ -66,7 +66,7 @@ class ProductController extends BaseController {
 
     public function delete() {
         $this->requireAuth();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $product = $this->model->find($id);
         if (!$product) { $_SESSION['error'] = 'Product not found.'; redirect('/inventory/products'); }
         $this->model->delete($id);

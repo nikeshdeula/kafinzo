@@ -164,7 +164,7 @@ class InvoiceController extends BaseController {
 
     public function delete() {
         $this->requireAuth();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $invoice = $this->invoiceModel->find($id);
         if (!$invoice) { $_SESSION['error'] = 'Invoice not found.'; redirect('/sales/invoices'); }
         $this->invoiceModel->delete($id);

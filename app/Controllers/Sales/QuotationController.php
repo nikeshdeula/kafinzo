@@ -160,7 +160,7 @@ class QuotationController extends BaseController {
 
     public function delete() {
         $this->requireAuth();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $quotation = $this->quotationModel->find($id);
         if (!$quotation) { $_SESSION['error'] = 'Quotation not found.'; redirect('/sales/quotations'); }
         $this->quotationModel->delete($id);

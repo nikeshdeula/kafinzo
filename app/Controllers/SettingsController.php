@@ -114,7 +114,7 @@ class SettingsController extends BaseController {
 
     public function deleteUser() {
         $this->requireAuth();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if (!$id) { $_SESSION['error'] = 'Invalid user.'; redirect('/settings/users'); }
         $this->userModel->delete($id);
         $_SESSION['success'] = 'User deleted.';
@@ -157,7 +157,7 @@ class SettingsController extends BaseController {
 
     public function deleteRole() {
         $this->requireAuth();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if (!$id) { $_SESSION['error'] = 'Invalid role.'; redirect('/settings/roles'); }
         $this->roleModel->delete($id);
         $_SESSION['success'] = 'Role deleted.';

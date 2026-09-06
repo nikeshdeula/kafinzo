@@ -56,7 +56,7 @@ class CategoryController extends BaseController {
 
     public function delete() {
         $this->requireAuth();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $category = $this->model->find($id);
         if ($category) {
             $this->model->delete($id);

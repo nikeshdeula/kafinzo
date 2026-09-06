@@ -235,7 +235,7 @@ class JournalController extends BaseController
     {
         $this->requireAuth();
 
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $journal = $this->journal->find($id);
 
         if (!$journal) {
