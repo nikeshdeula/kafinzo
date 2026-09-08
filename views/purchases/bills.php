@@ -58,7 +58,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Bill #</th><th>Date</th><th>Supplier</th><th>PAN</th><th>VAN</th><th>Branch</th><th>Address</th><th class="text-end">Subtotal</th><th class="text-end">Tax</th><th class="text-end">Discount</th><th class="text-end">Total</th>
+                <th>Bill #</th><th>Date</th><th>Supplier</th><th>PAN</th><th>VAT</th><th>Branch</th><th>Address</th><th class="text-end">Subtotal</th><th class="text-end">Tax</th><th class="text-end">Discount</th><th class="text-end">Total</th>
                 <th class="text-end">Paid</th><th class="text-end">Balance</th><th>Status</th><th style="width:110px">Actions</th>
             </tr></thead>
             <tbody>
@@ -80,7 +80,7 @@
                 <td><?= nepali_date('d M Y', $b['bill_date']) ?></td>
                 <td><?= htmlspecialchars($b['supplier_name'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($b['supplier_pan'] ?? '—') ?></td>
-                <td><?= htmlspecialchars($b['supplier_van'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($b['supplier_vat'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($b['supplier_branch'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($b['supplier_address'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($b['subtotal'] ?? 0, 2) ?></td>

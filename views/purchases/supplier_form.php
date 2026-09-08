@@ -24,8 +24,6 @@
             <input type="text" name="pan" class="form-control" value="<?= htmlspecialchars($supplier['pan'] ?? '') ?>"></div>
         <div class="col-md-6"><label class="form-label fw-600">VAT Number</label>
             <input type="text" name="vat_number" class="form-control" value="<?= htmlspecialchars($supplier['vat_number'] ?? '') ?>"></div>
-        <div class="col-md-6"><label class="form-label fw-600">Van Number</label>
-            <input type="text" name="van_number" class="form-control" placeholder="e.g. Ba 1 KHA 1234" value="<?= htmlspecialchars($supplier['van_number'] ?? '') ?>"></div>
         <div class="col-md-6"><label class="form-label fw-600">Phone</label>
             <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($supplier['phone'] ?? '') ?>"></div>
         <div class="col-md-6"><label class="form-label fw-600">Email</label>
