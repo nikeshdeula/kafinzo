@@ -17,14 +17,14 @@ class Supplier {
         $s->execute(['id'=>$id,'bid'=>$bid]); return $s->fetch();
     }
     public function create(array $d): int {
-        $s = $this->db->prepare("INSERT INTO suppliers (business_id,name,company_name,branch,pan,vat_number,phone,email,address,opening_balance,payment_terms,status) VALUES (:bid,:name,:company,:branch,:pan,:vat,:phone,:email,:address,:opening,:terms,:status)");
-        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??1),'name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'opening'=>$d['opening_balance']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active']);
+        $s = $this->db->prepare("INSERT INTO suppliers (business_id,name,company_name,branch,pan,vat_number,van_number,phone,email,address,opening_balance,payment_terms,status) VALUES (:bid,:name,:company,:branch,:pan,:vat,:van,:phone,:email,:address,:opening,:terms,:status)");
+        $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??1),'name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'van'=>$d['van_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'opening'=>$d['opening_balance']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active']);
         return (int)$this->db->lastInsertId();
     }
     public function update(int $id, array $d, int $bid = 0): bool {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $s = $this->db->prepare("UPDATE suppliers SET name=:name,company_name=:company,branch=:branch,pan=:pan,vat_number=:vat,phone=:phone,email=:email,address=:address,opening_balance=:opening,payment_terms=:terms,status=:status WHERE id=:id AND business_id=:bid");
-        return $s->execute(['name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'opening'=>$d['opening_balance']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active','id'=>$id,'bid'=>$bid]);
+        $s = $this->db->prepare("UPDATE suppliers SET name=:name,company_name=:company,branch=:branch,pan=:pan,vat_number=:vat,van_number=:van,phone=:phone,email=:email,address=:address,opening_balance=:opening,payment_terms=:terms,status=:status WHERE id=:id AND business_id=:bid");
+        return $s->execute(['name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'van'=>$d['van_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'opening'=>$d['opening_balance']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active','id'=>$id,'bid'=>$bid]);
     }
     public function count(int $bid=1): int {
         $s=$this->db->prepare("SELECT COUNT(*) FROM suppliers WHERE business_id=:bid AND status='active'");

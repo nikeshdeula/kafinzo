@@ -80,7 +80,7 @@
         <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead><tr>
-                <th>Bill #</th><th>Date</th><th>Customer</th><th>Branch</th><th>Address</th>
+                <th>Bill #</th><th>Date</th><th>Customer</th><th>PAN</th><th>VAN</th><th>Branch</th><th>Address</th>
                 <th class="text-end">Subtotal</th><th class="text-end">Discount</th><th class="text-end">Total</th>
                 <th class="text-end">TDS (1.5%)</th><th class="text-end">Grand Total</th>
                 <th class="text-end">Paid</th><th class="text-end">Balance</th><th>Status</th><th style="width:110px">Actions</th>
@@ -105,6 +105,8 @@
                 <td class="fw-600"><?= htmlspecialchars($b['bill_number']) ?></td>
                 <td><?= nepali_date('d M Y', $b['bill_date']) ?></td>
                 <td><?= htmlspecialchars($b['customer_name'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($b['customer_pan'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($b['customer_van'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($b['customer_branch'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($b['customer_address'] ?? '—') ?></td>
                 <td class="text-end">NPR <?= number_format($b['subtotal'] ?? 0, 2) ?></td>

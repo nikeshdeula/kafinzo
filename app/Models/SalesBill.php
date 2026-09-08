@@ -8,7 +8,7 @@ class SalesBill {
 
     public function all(int $bid = 0, ?int $customer_id = null, ?string $status = null, ?int $bsYear = null, ?int $bsMonth = null, ?string $search = null): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $sql = "SELECT b.*, c.name AS customer_name, c.address AS customer_address, c.branch AS customer_branch FROM sales_bills b LEFT JOIN customers c ON b.customer_id=c.id WHERE b.business_id=:bid";
+        $sql = "SELECT b.*, c.name AS customer_name, c.address AS customer_address, c.branch AS customer_branch, c.pan AS customer_pan, c.van_number AS customer_van FROM sales_bills b LEFT JOIN customers c ON b.customer_id=c.id WHERE b.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($customer_id) { $sql .= " AND b.customer_id=:cid"; $params['cid'] = $customer_id; }
         if ($status) { $sql .= " AND b.status=:st"; $params['st'] = $status; }
