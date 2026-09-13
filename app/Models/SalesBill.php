@@ -12,7 +12,11 @@ class SalesBill {
         $params = ['bid'=>$bid];
         if ($customer_id) { $sql .= " AND b.customer_id=:cid"; $params['cid'] = $customer_id; }
         if ($status) { $sql .= " AND b.status=:st"; $params['st'] = $status; }
-        if ($bsYear && $bsMonth) {
+        if ($bsMonth) {
+            if (!$bsYear) {
+                $currentBs = ad_to_bs(date('Y-m-d'));
+                $bsYear = $currentBs['year'] ?? 2083;
+            }
             $adStart = bs_to_ad($bsYear, $bsMonth, 1);
             $monthDays = getBsDaysInMonth($bsYear, $bsMonth);
             $adEnd = bs_to_ad($bsYear, $bsMonth, $monthDays);

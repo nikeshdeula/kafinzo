@@ -30,7 +30,7 @@
                 <select name="bs_year" class="form-select form-select-sm">
                     <option value="">All Years</option>
                     <?php foreach ($years as $y): ?>
-                    <option value="<?= $y ?>" <?= ($bsYear ?? $currentYear) == $y ? 'selected' : '' ?>><?= $y ?></option>
+                    <option value="<?= $y ?>" <?= ($bsYear ?? '') == $y ? 'selected' : '' ?>><?= $y ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
