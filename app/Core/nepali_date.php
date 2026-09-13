@@ -226,8 +226,6 @@ if (!function_exists('nepali_date_picker')) {
     function nepali_date_picker(string $name, string $value = '', string $label = '', array $attrs = []): string {
         $uniqueId = 'np_' . preg_replace('/[^a-zA-Z0-9]/', '_', $name) . '_' . uniqid();
         $required = isset($attrs['required']) && $attrs['required'] ? ' <span class="text-danger">*</span>' : '';
-        $readonlyAttr = isset($attrs['readonly']) && $attrs['readonly'] ? ' readonly' : '';
-        $placeholder = isset($attrs['placeholder']) ? $attrs['placeholder'] : 'YYYY-MM-DD';
         $currentAd = !empty($value) ? $value : date('Y-m-d');
         $bs = ad_to_bs($currentAd);
         if (!$bs) {
@@ -289,7 +287,7 @@ if (!function_exists('nepali_date_picker')) {
         }
         $jsMonthsDataStr = implode(";\n                    ", $jsMonthsData);
         return '<div class="input-group nepali-date-picker" style="position:relative;">
-                    <input type="text" class="form-control" id="' . $uniqueId . '" value="' . htmlspecialchars($nepaliValue) . '" placeholder="' . $placeholder . '"' . $readonlyAttr . ' onfocus="npOpenCalendar(\'' . $uniqueId . '\')" onchange="npSyncHidden(this, \'' . $name . '\')">
+                    <input type="text" class="form-control" id="' . $uniqueId . '" value="' . htmlspecialchars($nepaliValue) . '" placeholder="' . $placeholder . '" readonly onclick="npOpenCalendar(\'' . $uniqueId . '\')">
                     <span class="input-group-text" style="font-size:0.75rem;padding:4px 10px;color:#6c757d;font-weight:600;letter-spacing:0.5px;">BS</span>
                     <button type="button" class="btn btn-outline-secondary" style="padding:4px 10px;" onclick="npOpenCalendar(\'' . $uniqueId . '\')"><i class="bi bi-calendar3"></i></button>
                     <input type="hidden" name="' . htmlspecialchars($name) . '" id="' . $uniqueId . '_hidden" value="' . htmlspecialchars($currentAd) . '">
@@ -389,17 +387,6 @@ if (!function_exists('nepali_date_picker')) {
                     npCloseCalendar(id);
                     npRenderCalendar(id);
                 }
-                function npSyncHidden(input, name) {
-                    var parts = input.value.split("-");
-                    if (parts.length === 3) {
-                        var y = parseInt(parts[0]), m = parseInt(parts[1]), d = parseInt(parts[2]);
-                        var ad = bsToAd(y, m, d);
-                        if (ad) {
-                            document.getElementById(input.id + "_hidden").value = ad;
-                            npState_' . $uniqueId . ' = {year: y, month: m, day: d};
-                        }
-                    }
-                }
                 function npRenderCalendar(id) {
                     var state = npState_' . $uniqueId . ';
                     var months = ["Baisakh","Jestha","Ashadh","Shrawan","Bhadra","Ashwin","Kartik","Mangsir","Poush","Magh","Falgun","Chaitra"];
@@ -420,7 +407,8 @@ if (!function_exists('nepali_date_picker')) {
                 (function(npickerId) {
                     document.addEventListener("click", function(e) {
                         var cal = document.getElementById("cal_" + npickerId);
-                        if (cal && cal.style.display === "block" && !cal.contains(e.target) && e.target !== document.getElementById(npickerId) && !e.target.closest("button[onclick*=\"npOpenCalendar\"]")) {
+                        var input = document.getElementById(npickerId);
+                        if (cal && cal.style.display === "block" && !cal.contains(e.target) && e.target !== input && !e.target.closest("button[onclick*=\"npOpenCalendar\"]")) {
                             cal.style.display = "none";
                         }
                     });
