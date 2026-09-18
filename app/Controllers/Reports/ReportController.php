@@ -99,7 +99,7 @@ class ReportController extends BaseController
         $business = $this->getBusinessName();
         $period = $this->getPeriodLabel($from, $to);
 
-        $headers = ['Date', 'Company name', 'Bill no.', 'Amount', 'Discount', 'Net amt', '13% Vat Amt', 'Total Amount', '1.5% TDS'];
+        $headers = ['Date', 'Company name', 'Bill no.', 'VAT No.', 'Amount', 'Discount', 'Net amt', '13% Vat Amt', 'Total Amount', '1.5% TDS'];
         $data = [];
         $totalAmount = 0;
         $totalDiscount = 0;
@@ -128,6 +128,7 @@ class ReportController extends BaseController
                 nepali_date('Y-m-d', $r['date']),
                 $r['party_name'] ?? '—',
                 $r['ref_number'],
+                $r['party_vat_number'] ?? '—',
                 number_format($amount, 2),
                 number_format($discount, 2),
                 number_format($net, 2),
@@ -139,6 +140,7 @@ class ReportController extends BaseController
 
         $totals = [
             'total sales',
+            '',
             '',
             '',
             number_format($totalAmount, 2),
