@@ -11,16 +11,42 @@
 
 <div class="card mb-3">
     <div class="card-body py-3">
-        <form method="GET" action="/reports/purchase-statement" class="row g-3 align-items-end">
-            <div class="col-md-3">
+        <form method="GET" action="/reports/purchase-statement" id="purchaseFilterForm" class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label fw-600 small text-muted">Nepali Month</label>
+                <select class="form-select form-select-sm" id="nepaliMonthSelect" onchange="applyNepaliMonth(this.value)">
+                    <option value="">-- Select Month --</option>
+                    <option value="1">Baisakh</option>
+                    <option value="2">Jestha</option>
+                    <option value="3">Ashadh</option>
+                    <option value="4">Shrawan</option>
+                    <option value="5">Bhadra</option>
+                    <option value="6">Ashwin</option>
+                    <option value="7">Kartik</option>
+                    <option value="8">Mangsir</option>
+                    <option value="9">Poush</option>
+                    <option value="10">Magh</option>
+                    <option value="11">Falgun</option>
+                    <option value="12">Chaitra</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label fw-600 small text-muted">Year</label>
+                <select class="form-select form-select-sm" id="nepaliYearSelect" onchange="applyNepaliMonth(document.getElementById('nepaliMonthSelect').value)">
+                    <?php for ($y = 2083; $y >= 2075; $y--): ?>
+                    <option value="<?= $y ?>" <?= $y == 2083 ? 'selected' : '' ?>><?= $y ?></option>
+                    <?php endfor; ?>
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label class="form-label fw-600 small text-muted">From Date</label>
                 <?= nepali_date_picker('from', $from ?? '', 'From', ['class' => 'form-control form-control-sm', 'placeholder' => 'YYYY-MM-DD']) ?>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label fw-600 small text-muted">To Date</label>
                 <?= nepali_date_picker('to', $to ?? '', 'To', ['class' => 'form-control form-control-sm', 'placeholder' => 'YYYY-MM-DD']) ?>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label fw-600 small text-muted">Supplier</label>
                 <select name="supplier_id" class="form-select form-select-sm">
                     <option value="">All Suppliers</option>
@@ -29,14 +55,14 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <button type="submit" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-funnel me-1"></i> Filter</button>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <a href="/reports/purchase-statement" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
             </div>
-            <div class="col-md-2">
-                <a href="/reports/purchase-statement/export?from=<?= urlencode($from ?? '') ?>&to=<?= urlencode($to ?? '') ?>&supplier_id=<?= urlencode($supplier_id ?? '') ?>" class="btn btn-outline-success btn-sm w-100"><i class="bi bi-file-earmark-excel me-1"></i> Export Excel</a>
+            <div class="col-md-1">
+                <a href="/reports/purchase-statement/export?from=<?= urlencode($from ?? '') ?>&to=<?= urlencode($to ?? '') ?>&supplier_id=<?= urlencode($supplier_id ?? '') ?>" class="btn btn-outline-success btn-sm w-100"><i class="bi bi-file-earmark-excel me-1"></i> Export</a>
             </div>
         </form>
     </div>
@@ -124,5 +150,27 @@
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+function applyNepaliMonth(month) {
+    if (!month) return;
+    var year = parseInt(document.getElementById('nepaliYearSelect').value);
+    month = parseInt(month);
+    var daysInMonth = 30;
+    if (window.npMonthsData && window.npMonthsData[year] && window.npMonthsData[year][month]) {
+        daysInMonth = window.npMonthsData[year][month];
+    }
+    var fromAd = bsToAd(year, month, 1);
+    var toAd = bsToAd(year, month, daysInMonth);
+    if (fromAd && toAd) {
+        document.querySelector('[name="from"]').value = fromAd;
+        var fromPicker = document.getElementById(document.querySelector('[name="from"]').closest('.nepali-date-picker').querySelector('.form-control').id);
+        if (fromPicker) fromPicker.value = year + '-' + String(month).padStart(2,'0') + '-01';
+        document.querySelector('[name="to"]').value = toAd;
+        var toPicker = document.getElementById(document.querySelector('[name="to"]').closest('.nepali-date-picker').querySelector('.form-control').id);
+        if (toPicker) toPicker.value = year + '-' + String(month).padStart(2,'0') + '-' + String(daysInMonth).padStart(2,'0');
+    }
+}
+</script>
 
 <?php $content = ob_get_clean(); require BASE_PATH . 'views/layouts/app.php'; ?>
