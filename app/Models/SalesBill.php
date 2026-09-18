@@ -6,26 +6,14 @@ class SalesBill {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 0, ?int $customer_id = null, ?string $status = null, ?int $bsYear = null, ?int $bsMonth = null, ?string $search = null): array {
+    public function all(int $bid = 0, ?int $customer_id = null, ?string $status = null, ?string $from = null, ?string $to = null, ?string $search = null): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $sql = "SELECT b.*, c.name AS customer_name, c.address AS customer_address, c.branch AS customer_branch, c.pan AS customer_pan, c.vat_number AS customer_vat FROM sales_bills b LEFT JOIN customers c ON b.customer_id=c.id WHERE b.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($customer_id) { $sql .= " AND b.customer_id=:cid"; $params['cid'] = $customer_id; }
         if ($status) { $sql .= " AND b.status=:st"; $params['st'] = $status; }
-        if ($bsMonth) {
-            if (!$bsYear) {
-                $currentBs = ad_to_bs(date('Y-m-d'));
-                $bsYear = $currentBs['year'] ?? 2083;
-            }
-            $adStart = bs_to_ad($bsYear, $bsMonth, 1);
-            $monthDays = getBsDaysInMonth($bsYear, $bsMonth);
-            $adEnd = bs_to_ad($bsYear, $bsMonth, $monthDays);
-            if ($adStart && $adEnd) {
-                $sql .= " AND b.bill_date BETWEEN :start AND :end";
-                $params['start'] = $adStart;
-                $params['end'] = $adEnd;
-            }
-        }
+        if ($from) { $sql .= " AND b.bill_date >= :from"; $params['from'] = $from; }
+        if ($to) { $sql .= " AND b.bill_date <= :to"; $params['to'] = $to; }
         if ($search) {
             $sql .= " AND (c.name LIKE :search OR c.address LIKE :search OR b.bill_number LIKE :search)";
             $params['search'] = "%{$search}%";

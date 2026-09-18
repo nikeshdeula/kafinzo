@@ -22,10 +22,18 @@ class SalesOrderController extends BaseController {
         $this->requireAuth();
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
         $status = $_GET['status'] ?? null;
-        $orders = $this->model->all($this->businessId(), $customer_id, $status);
+        $from = trim($_GET['from'] ?? '') ?: null;
+        $to = trim($_GET['to'] ?? '') ?: null;
+        $orders = $this->model->all($this->businessId(), $customer_id, $status, $from, $to);
         $customers = $this->customerModel->all();
         $title = 'Sales Orders';
-        return view('sales/orders', compact('orders', 'customers', 'customer_id', 'status', 'title'));
+
+        $nepaliMonths = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+        $currentBs = ad_to_bs(date('Y-m-d'));
+        $currentYear = $currentBs['year'] ?? 2083;
+        $years = range($currentYear - 2, $currentYear + 1);
+
+        return view('sales/orders', compact('orders', 'customers', 'customer_id', 'status', 'from', 'to', 'title', 'nepaliMonths', 'years', 'currentYear'));
     }
 
     public function create() {

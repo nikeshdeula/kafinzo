@@ -22,11 +22,19 @@ class PurchaseBillController extends BaseController {
         $this->requireAuth();
         $supplier_id = isset($_GET['supplier_id']) ? (int)$_GET['supplier_id'] : null;
         $status = $_GET['status'] ?? null;
-        $bills = $this->model->all($this->businessId(), $supplier_id, $status);
+        $from = trim($_GET['from'] ?? '') ?: null;
+        $to = trim($_GET['to'] ?? '') ?: null;
+        $bills = $this->model->all($this->businessId(), $supplier_id, $status, $from, $to);
         $suppliers = $this->supplierModel->all();
         $business = $this->businessInfo();
         $title = 'Purchase Bills';
-        return view('purchases/bills', compact('bills', 'suppliers', 'supplier_id', 'status', 'title', 'business'));
+
+        $nepaliMonths = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+        $currentBs = ad_to_bs(date('Y-m-d'));
+        $currentYear = $currentBs['year'] ?? 2083;
+        $years = range($currentYear - 2, $currentYear + 1);
+
+        return view('purchases/bills', compact('bills', 'suppliers', 'supplier_id', 'status', 'from', 'to', 'title', 'business', 'nepaliMonths', 'years', 'currentYear'));
     }
 
     public function create() {

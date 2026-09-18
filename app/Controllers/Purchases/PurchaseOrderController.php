@@ -25,10 +25,18 @@ class PurchaseOrderController extends BaseController {
         $this->requireAuth();
         $supplier_id = isset($_GET['supplier_id']) ? (int)$_GET['supplier_id'] : null;
         $status = $_GET['status'] ?? null;
-        $orders = $this->model->all($this->businessId(), $supplier_id, $status);
+        $from = trim($_GET['from'] ?? '') ?: null;
+        $to = trim($_GET['to'] ?? '') ?: null;
+        $orders = $this->model->all($this->businessId(), $supplier_id, $status, $from, $to);
         $suppliers = $this->supplierModel->all();
         $title = 'Purchase Orders';
-        return view('purchases/orders', compact('orders', 'suppliers', 'supplier_id', 'status', 'title'));
+
+        $nepaliMonths = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+        $currentBs = ad_to_bs(date('Y-m-d'));
+        $currentYear = $currentBs['year'] ?? 2083;
+        $years = range($currentYear - 2, $currentYear + 1);
+
+        return view('purchases/orders', compact('orders', 'suppliers', 'supplier_id', 'status', 'from', 'to', 'title', 'nepaliMonths', 'years', 'currentYear'));
     }
 
     public function create() {

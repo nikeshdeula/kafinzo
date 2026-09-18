@@ -12,8 +12,33 @@
 
 <div class="card mb-3">
     <div class="card-body py-3">
-        <form method="GET" action="/sales/orders" class="row g-3 align-items-end">
-            <div class="col-md-4">
+        <form method="GET" action="/sales/orders" class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label fw-600 small text-muted">Nepali Month</label>
+                <select class="form-select form-select-sm" id="nepaliMonthSelect" onchange="applyNepaliMonth(this.value)">
+                    <option value="">-- Select Month --</option>
+                    <?php foreach ($nepaliMonths as $i => $name): ?>
+                    <option value="<?= $i + 1 ?>"><?= $name ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label fw-600 small text-muted">Year</label>
+                <select class="form-select form-select-sm" id="nepaliYearSelect" onchange="applyNepaliMonth(document.getElementById('nepaliMonthSelect').value)">
+                    <?php for ($y = $currentYear; $y >= $currentYear - 2; $y--): ?>
+                    <option value="<?= $y ?>"><?= $y ?></option>
+                    <?php endfor; ?>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-600 small text-muted">From Date</label>
+                <?= nepali_date_picker('from', $from ?? '', 'From', ['class' => 'form-control form-control-sm']) ?>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-600 small text-muted">To Date</label>
+                <?= nepali_date_picker('to', $to ?? '', 'To', ['class' => 'form-control form-control-sm']) ?>
+            </div>
+            <div class="col-md-2">
                 <label class="form-label fw-600 small text-muted">Customer</label>
                 <select name="customer_id" class="form-select form-select-sm">
                     <option value="">All Customers</option>
@@ -22,27 +47,46 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-1">
                 <label class="form-label fw-600 small text-muted">Status</label>
                 <select name="status" class="form-select form-select-sm">
-                    <option value="">All Statuses</option>
-                    <option value="draft" <?= ($status ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
-                    <option value="pending" <?= ($status ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
-                    <option value="processing" <?= ($status ?? '') === 'processing' ? 'selected' : '' ?>>Processing</option>
-                    <option value="shipped" <?= ($status ?? '') === 'shipped' ? 'selected' : '' ?>>Shipped</option>
-                    <option value="delivered" <?= ($status ?? '') === 'delivered' ? 'selected' : '' ?>>Delivered</option>
-                    <option value="cancelled" <?= ($status ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                    <option value="">All</option>
+                    <?php foreach (['draft'=>'Draft','pending'=>'Pending','processing'=>'Processing','shipped'=>'Shipped','delivered'=>'Delivered','cancelled'=>'Cancelled'] as $v => $l): ?>
+                    <option value="<?= $v ?>" <?= ($status ?? '') === $v ? 'selected' : '' ?>><?= $l ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <button type="submit" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-funnel me-1"></i> Filter</button>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <a href="/sales/orders" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+function applyNepaliMonth(month) {
+    if (!month) return;
+    var year = parseInt(document.getElementById('nepaliYearSelect').value);
+    month = parseInt(month);
+    var daysInMonth = 30;
+    if (window.npMonthsData && window.npMonthsData[year] && window.npMonthsData[year][month]) {
+        daysInMonth = window.npMonthsData[year][month];
+    }
+    var fromAd = bsToAd(year, month, 1);
+    var toAd = bsToAd(year, month, daysInMonth);
+    if (fromAd && toAd) {
+        document.querySelector('[name="from"]').value = fromAd;
+        var fromPicker = document.getElementById(document.querySelector('[name="from"]').closest('.nepali-date-picker').querySelector('.form-control').id);
+        if (fromPicker) fromPicker.value = year + '-' + String(month).padStart(2,'0') + '-01';
+        document.querySelector('[name="to"]').value = toAd;
+        var toPicker = document.getElementById(document.querySelector('[name="to"]').closest('.nepali-date-picker').querySelector('.form-control').id);
+        if (toPicker) toPicker.value = year + '-' + String(month).padStart(2,'0') + '-' + String(daysInMonth).padStart(2,'0');
+    }
+}
+</script>
 
 <div class="card">
     <div class="card-body p-0">

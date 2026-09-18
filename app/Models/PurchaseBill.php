@@ -6,12 +6,14 @@ class PurchaseBill {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 0, ?int $supplier_id = null, ?string $status = null): array {
+    public function all(int $bid = 0, ?int $supplier_id = null, ?string $status = null, ?string $from = null, ?string $to = null): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $sql = "SELECT b.*, s.name AS supplier_name, s.address AS supplier_address, s.branch AS supplier_branch, s.pan AS supplier_pan, s.vat_number AS supplier_vat FROM purchase_bills b LEFT JOIN suppliers s ON b.supplier_id=s.id WHERE b.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($supplier_id) { $sql .= " AND b.supplier_id=:sid"; $params['sid'] = $supplier_id; }
         if ($status) { $sql .= " AND b.status=:st"; $params['st'] = $status; }
+        if ($from) { $sql .= " AND b.bill_date >= :from"; $params['from'] = $from; }
+        if ($to) { $sql .= " AND b.bill_date <= :to"; $params['to'] = $to; }
         $sql .= " ORDER BY b.id ASC";
         $s = $this->db->prepare($sql);
         $s->execute($params);

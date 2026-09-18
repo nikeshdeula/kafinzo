@@ -22,10 +22,10 @@ class SalesBillController extends BaseController {
         $this->requireAuth();
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
         $status = $_GET['status'] ?? null;
-        $bsYear = isset($_GET['bs_year']) ? (int)$_GET['bs_year'] : null;
-        $bsMonth = isset($_GET['bs_month']) ? (int)$_GET['bs_month'] : null;
+        $from = trim($_GET['from'] ?? '') ?: null;
+        $to = trim($_GET['to'] ?? '') ?: null;
         $search = trim($_GET['search'] ?? '') ?: null;
-        $bills = $this->model->all($this->businessId(), $customer_id, $status, $bsYear, $bsMonth, $search);
+        $bills = $this->model->all($this->businessId(), $customer_id, $status, $from, $to, $search);
         $customers = $this->customerModel->all();
         $business = $this->businessInfo();
         $title = 'Sales Bills';
@@ -35,23 +35,26 @@ class SalesBillController extends BaseController {
         $currentYear = $currentBs['year'] ?? 2083;
         $years = range($currentYear - 2, $currentYear + 1);
 
-        return view('sales/bills', compact('bills', 'customers', 'customer_id', 'status', 'bsYear', 'bsMonth', 'search', 'title', 'business', 'nepaliMonths', 'years', 'currentYear'));
+        return view('sales/bills', compact('bills', 'customers', 'customer_id', 'status', 'from', 'to', 'search', 'title', 'business', 'nepaliMonths', 'years', 'currentYear'));
     }
 
     public function export() {
         $this->requireAuth();
         $customer_id = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : null;
         $status = $_GET['status'] ?? null;
-        $bsYear = isset($_GET['bs_year']) ? (int)$_GET['bs_year'] : null;
-        $bsMonth = isset($_GET['bs_month']) ? (int)$_GET['bs_month'] : null;
+        $from = trim($_GET['from'] ?? '') ?: null;
+        $to = trim($_GET['to'] ?? '') ?: null;
         $search = trim($_GET['search'] ?? '') ?: null;
-        $bills = $this->model->all($this->businessId(), $customer_id, $status, $bsYear, $bsMonth, $search);
+        $bills = $this->model->all($this->businessId(), $customer_id, $status, $from, $to, $search);
         $business = $this->businessInfo();
 
-        $nepaliMonths = ['','Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
         $period = 'All Bills';
-        if ($bsYear && $bsMonth) {
-            $period = ($nepaliMonths[$bsMonth] ?? '') . ' ' . $bsYear;
+        if ($from && $to) {
+            $period = nepali_date('d M Y', $from) . ' to ' . nepali_date('d M Y', $to);
+        } elseif ($from) {
+            $period = 'From ' . nepali_date('d M Y', $from);
+        } elseif ($to) {
+            $period = 'Until ' . nepali_date('d M Y', $to);
         }
 
         $headers = ['Bill #', 'Date', 'Customer', 'Address', 'Subtotal', 'Discount', 'Total', 'TDS (1.5%)', 'Grand Total', 'Paid', 'Balance', 'Status'];

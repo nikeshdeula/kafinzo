@@ -6,12 +6,14 @@ class PurchaseOrder {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid = 0, ?int $supplier_id = null, ?string $status = null): array {
+    public function all(int $bid = 0, ?int $supplier_id = null, ?string $status = null, ?string $from = null, ?string $to = null): array {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $sql = "SELECT o.*, s.name AS supplier_name, s.address AS supplier_address, s.branch AS supplier_branch FROM purchase_orders o LEFT JOIN suppliers s ON o.supplier_id=s.id WHERE o.business_id=:bid";
         $params = ['bid'=>$bid];
         if ($supplier_id) { $sql .= " AND o.supplier_id=:sid"; $params['sid'] = $supplier_id; }
         if ($status) { $sql .= " AND o.status=:st"; $params['st'] = $status; }
+        if ($from) { $sql .= " AND o.order_date >= :from"; $params['from'] = $from; }
+        if ($to) { $sql .= " AND o.order_date <= :to"; $params['to'] = $to; }
         $sql .= " ORDER BY o.id ASC";
         $s = $this->db->prepare($sql);
         $s->execute($params);
