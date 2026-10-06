@@ -6,7 +6,8 @@ class Expense {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid=1): array {
+    public function all(int $bid=0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT e.*,c.name AS category_name FROM expenses e LEFT JOIN expense_categories c ON e.category_id=c.id WHERE e.business_id=:bid ORDER BY e.expense_date DESC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
@@ -15,11 +16,13 @@ class Expense {
         $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??1),'cat'=>$d['category_id']??null,'date'=>$d['expense_date'],'vendor'=>$d['vendor']??null,'amount'=>$d['amount']??0,'tax'=>$d['tax_amount']??0,'account'=>$d['payment_account']??null,'desc'=>$d['description']??null,'ref'=>$d['reference']??null]);
         return (int)$this->db->lastInsertId();
     }
-    public function categories(int $bid=1): array {
+    public function categories(int $bid=0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT * FROM expense_categories WHERE business_id=:bid ORDER BY name");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
-    public function totalThisMonth(int $bid=1): float {
+    public function totalThisMonth(int $bid=0): float {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM expenses WHERE business_id=:bid AND MONTH(expense_date)=MONTH(NOW()) AND YEAR(expense_date)=YEAR(NOW())");
         $s->execute(['bid'=>$bid]); return (float)$s->fetchColumn();
     }

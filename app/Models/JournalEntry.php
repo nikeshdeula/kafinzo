@@ -13,8 +13,9 @@ class JournalEntry
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function all(int $businessId = 1): array
+    public function all(int $businessId = 0): array
     {
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 1;
         $stmt = $this->db->prepare(
             "SELECT * FROM journal_entries WHERE business_id = :bid ORDER BY entry_date DESC, id DESC"
         );
@@ -37,7 +38,7 @@ class JournalEntry
              VALUES (:business_id, :journal_number, :entry_date, :description, :reference)"
         );
         $stmt->execute([
-            'business_id'   => $data['business_id'] ?? 1,
+            'business_id'   => $data['business_id'] ?? ($_SESSION['business_id'] ?? 1),
             'journal_number' => $data['journal_number'],
             'entry_date'     => $data['entry_date'],
             'description'    => $data['description'],
@@ -70,8 +71,9 @@ class JournalEntry
         return true;
     }
 
-    public function nextNumber(int $businessId = 1): string
+    public function nextNumber(int $businessId = 0): string
     {
+        if ($businessId === 0) $businessId = $_SESSION['business_id'] ?? 1;
         $stmt = $this->db->prepare(
             "SELECT MAX(journal_number) FROM journal_entries WHERE business_id = :bid"
         );

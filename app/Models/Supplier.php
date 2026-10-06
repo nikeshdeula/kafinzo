@@ -26,7 +26,8 @@ class Supplier {
         $s = $this->db->prepare("UPDATE suppliers SET name=:name,company_name=:company,branch=:branch,pan=:pan,vat_number=:vat,phone=:phone,email=:email,address=:address,opening_balance=:opening,payment_terms=:terms,status=:status WHERE id=:id AND business_id=:bid");
         return $s->execute(['name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'opening'=>$d['opening_balance']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active','id'=>$id,'bid'=>$bid]);
     }
-    public function count(int $bid=1): int {
+    public function count(int $bid=0): int {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT COUNT(*) FROM suppliers WHERE business_id=:bid AND status='active'");
         $s->execute(['bid'=>$bid]); return (int)$s->fetchColumn();
     }

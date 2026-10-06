@@ -21,19 +21,23 @@ class Product {
         $s->execute(['bid'=>$d['business_id']??($_SESSION['business_id']??1),'cat'=>$d['category_id']??null,'unit'=>$d['unit_id']??null,'name'=>$d['name'],'sku'=>$d['sku']??null,'type'=>$d['type']??'product','pp'=>$d['purchase_price']??0,'sp'=>$d['selling_price']??0,'tax'=>$d['tax_rate']??0,'os'=>$d['opening_stock']??0,'cs'=>$d['opening_stock']??0,'ms'=>$d['minimum_stock']??0,'desc'=>$d['description']??null,'status'=>$d['status']??'active']);
         return (int)$this->db->lastInsertId();
     }
-    public function categories(int $bid=1): array {
+    public function categories(int $bid=0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT * FROM product_categories WHERE business_id=:bid ORDER BY name");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
-    public function units(int $bid=1): array {
+    public function units(int $bid=0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT * FROM units WHERE business_id=:bid ORDER BY name");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
-    public function count(int $bid=1): int {
+    public function count(int $bid=0): int {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT COUNT(*) FROM products WHERE business_id=:bid AND status='active'");
         $s->execute(['bid'=>$bid]); return (int)$s->fetchColumn();
     }
-    public function lowStock(int $bid=1): array {
+    public function lowStock(int $bid=0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT * FROM products WHERE business_id=:bid AND type='product' AND current_stock <= minimum_stock AND minimum_stock > 0");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }

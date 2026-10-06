@@ -6,7 +6,8 @@ class BankAccount {
     private $db;
     public function __construct() { $this->db = Database::getInstance()->getConnection(); }
 
-    public function all(int $bid=1): array {
+    public function all(int $bid=0): array {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT * FROM bank_accounts WHERE business_id=:bid ORDER BY is_default DESC, account_name ASC");
         $s->execute(['bid'=>$bid]); return $s->fetchAll();
     }
@@ -25,7 +26,8 @@ class BankAccount {
         $s=$this->db->prepare("SELECT * FROM bank_transactions WHERE bank_account_id=:id AND business_id=:bid ORDER BY transaction_date DESC LIMIT 50");
         $s->execute(['id'=>$accountId,'bid'=>$bid]); return $s->fetchAll();
     }
-    public function totalBalance(int $bid=1): float {
+    public function totalBalance(int $bid=0): float {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT COALESCE(SUM(current_balance),0) FROM bank_accounts WHERE business_id=:bid AND status='active'");
         $s->execute(['bid'=>$bid]); return (float)$s->fetchColumn();
     }

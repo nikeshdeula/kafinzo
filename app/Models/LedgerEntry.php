@@ -66,7 +66,7 @@ class LedgerEntry
              VALUES (:business_id, :journal_entry_id, :account_id, :description, :debit, :credit)"
         );
         return $stmt->execute([
-            'business_id'      => $data['business_id'] ?? 1,
+            'business_id'      => $data['business_id'] ?? ($_SESSION['business_id'] ?? 1),
             'journal_entry_id' => $data['journal_entry_id'],
             'account_id'       => $data['account_id'],
             'description'      => $data['description'] ?? null,

@@ -22,7 +22,7 @@ class Category {
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO product_categories (business_id, name, description, created_at) VALUES (:bid, :name, :desc, NOW())");
         $s->execute([
-            'bid'  => $d['business_id'] ?? 1,
+            'bid'  => $d['business_id'] ?? ($_SESSION['business_id'] ?? 1),
             'name' => $d['name'],
             'desc' => $d['description'] ?? null,
         ]);

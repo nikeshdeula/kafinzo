@@ -23,10 +23,11 @@ class Customer {
     }
     public function update(int $id, array $d, int $bid = 0): bool {
         if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
-        $s = $this->db->prepare("UPDATE customers SET name=:name,company_name=:company,branch=:branch,pan=:pan,vat_number=:vat,phone=:phone,email=:email,address=:address,credit_limit=:credit,payment_terms=:terms,status=:status WHERE id=:id AND business_id=:bid");
-        return $s->execute(['name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'credit'=>$d['credit_limit']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active','id'=>$id,'bid'=>$bid]);
+        $s = $this->db->prepare("UPDATE customers SET name=:name,company_name=:company,branch=:branch,pan=:pan,vat_number=:vat,phone=:phone,email=:email,address=:address,credit_limit=:credit,opening_balance=:opening,payment_terms=:terms,status=:status WHERE id=:id AND business_id=:bid");
+        return $s->execute(['name'=>$d['name'],'company'=>$d['company_name']??null,'branch'=>$d['branch']??null,'pan'=>$d['pan']??null,'vat'=>$d['vat_number']??null,'phone'=>$d['phone']??null,'email'=>$d['email']??null,'address'=>$d['address']??null,'credit'=>$d['credit_limit']??0,'opening'=>$d['opening_balance']??0,'terms'=>$d['payment_terms']??0,'status'=>$d['status']??'active','id'=>$id,'bid'=>$bid]);
     }
-    public function count(int $bid=1): int {
+    public function count(int $bid=0): int {
+        if ($bid === 0) $bid = $_SESSION['business_id'] ?? 1;
         $s=$this->db->prepare("SELECT COUNT(*) FROM customers WHERE business_id=:bid AND status='active'");
         $s->execute(['bid'=>$bid]); return (int)$s->fetchColumn();
     }

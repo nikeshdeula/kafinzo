@@ -47,7 +47,7 @@ class StockMovement {
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO stock_movements (business_id, product_id, warehouse_id, reference_type, reference_id, quantity_change, notes, created_at, created_by) VALUES (:bid, :pid, :wid, :rtype, :rid, :qty, :notes, NOW(), :uid)");
         $s->execute([
-            'bid'    => $d['business_id'] ?? 1,
+            'bid'    => $d['business_id'] ?? ($_SESSION['business_id'] ?? 1),
             'pid'    => $d['product_id'],
             'wid'    => $d['warehouse_id'] ?? null,
             'rtype'  => $d['reference_type'],

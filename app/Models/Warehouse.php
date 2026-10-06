@@ -22,7 +22,7 @@ class Warehouse {
     public function create(array $d): int {
         $s = $this->db->prepare("INSERT INTO warehouses (business_id, name, location, is_default, created_at) VALUES (:bid, :name, :loc, :def, NOW())");
         $s->execute([
-            'bid'  => $d['business_id'] ?? 1,
+            'bid'  => $d['business_id'] ?? ($_SESSION['business_id'] ?? 1),
             'name' => $d['name'],
             'loc'  => $d['location'] ?? null,
             'def'  => !empty($d['is_default']) ? 1 : 0,
