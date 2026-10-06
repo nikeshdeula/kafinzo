@@ -9,7 +9,8 @@
 
 <div class="card" style="max-width:600px;">
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
             <thead><tr><th>#</th><th>Category Name</th></tr></thead>
             <tbody>
             <?php foreach ($categories as $i => $cat): ?>
@@ -20,6 +21,7 @@
             <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 

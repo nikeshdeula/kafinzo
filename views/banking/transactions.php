@@ -22,7 +22,8 @@
             <p>No transactions found for this account.</p>
         </div>
         <?php else: ?>
-        <table class="table table-hover mb-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
             <thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Reference</th>
             <th class="text-end">Amount</th><th>Reconciled</th></tr></thead>
             <tbody>
@@ -41,6 +42,7 @@
             <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
         <?php endif; ?>
     </div>
 </div>

@@ -92,7 +92,8 @@ $typeLabels = [
         <span class="badge ms-auto" style="background:<?= $meta['color'] ?>"><?= count($group['accounts']) ?> accounts</span>
     </div>
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
             <thead>
                 <tr>
                     <th style="width:100px">Code</th>
@@ -129,6 +130,7 @@ $typeLabels = [
                 </tr>
             </tfoot>
         </table>
+        </div>
     </div>
 </div>
 <?php endforeach; ?>

@@ -45,7 +45,8 @@ foreach ($accounts as $type => $rows):
         <span class="badge ms-auto" style="background:<?= $meta['color'] ?>"><?= count($rows) ?> accounts</span>
     </div>
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
             <thead>
                 <tr>
                     <th style="width:100px">Code</th>
@@ -89,6 +90,7 @@ foreach ($accounts as $type => $rows):
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 <?php endforeach; ?>

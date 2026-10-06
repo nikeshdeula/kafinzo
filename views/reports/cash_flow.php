@@ -85,7 +85,8 @@
         <span class="badge ms-auto" style="background:#06d6a0">Day-to-day</span>
     </div>
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
             <thead><tr><th>Description</th><th class="text-end">Inflow</th><th class="text-end">Outflow</th></tr></thead>
             <tbody>
                 <tr>
@@ -108,6 +109,7 @@
                 </tr>
             </tfoot>
         </table>
+        </div>
     </div>
 </div>
 
@@ -121,7 +123,8 @@
         <span class="badge ms-auto" style="background:#fb8500">Long-term</span>
     </div>
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
             <thead><tr><th>Description</th><th class="text-end">Inflow</th><th class="text-end">Outflow</th></tr></thead>
             <tbody>
                 <tr>
@@ -137,6 +140,7 @@
                 </tr>
             </tfoot>
         </table>
+        </div>
     </div>
 </div>
 
@@ -150,7 +154,8 @@
         <span class="badge ms-auto" style="background:#7209b7">Capital</span>
     </div>
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
             <thead><tr><th>Description</th><th class="text-end">Inflow</th><th class="text-end">Outflow</th></tr></thead>
             <tbody>
                 <tr>
@@ -173,6 +178,7 @@
                 </tr>
             </tfoot>
         </table>
+        </div>
     </div>
 </div>
 
