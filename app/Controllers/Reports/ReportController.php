@@ -24,8 +24,8 @@ class ReportController extends BaseController
     private function getBusinessName(): string
     {
         $db = \App\Core\Database::getInstance()->getConnection();
-        $s = $db->prepare("SELECT name FROM businesses WHERE id=1 LIMIT 1");
-        $s->execute();
+        $s = $db->prepare("SELECT name FROM businesses WHERE id=:bid LIMIT 1");
+        $s->execute(['bid' => $this->businessId()]);
         return $s->fetchColumn() ?: 'My Business';
     }
 
@@ -44,7 +44,7 @@ class ReportController extends BaseController
     public function profitLoss()
     {
         $this->requireAuth();
-        $data = $this->report->profitLoss();
+        $data = $this->report->profitLoss($this->businessId());
         $pageTitle = 'Profit & Loss';
         $pageDesc = 'View your income statement.';
         $module = 'reports';
@@ -55,7 +55,7 @@ class ReportController extends BaseController
     public function balanceSheet()
     {
         $this->requireAuth();
-        $data = $this->report->balanceSheet();
+        $data = $this->report->balanceSheet($this->businessId());
         $pageTitle = 'Balance Sheet';
         $pageDesc = 'View your financial position.';
         $module = 'reports';
@@ -66,7 +66,7 @@ class ReportController extends BaseController
     public function cashFlow()
     {
         $this->requireAuth();
-        $data = $this->report->cashFlow();
+        $data = $this->report->cashFlow($this->businessId());
         $pageTitle = 'Cash Flow';
         $pageDesc = 'View your cash movement.';
         $module = 'reports';

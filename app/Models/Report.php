@@ -13,13 +13,22 @@ class Report
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function profitLoss(int $businessId = 1): array
+    private function bid(int $businessId): int
     {
+        if ($businessId === 0) {
+            $businessId = (int)($_SESSION['business_id'] ?? 1);
+        }
+        return $businessId;
+    }
+
+    public function profitLoss(int $businessId = 0): array
+    {
+        $businessId = $this->bid($businessId);
+
         $stmt = $this->db->prepare("
-            SELECT COALESCE(SUM(ii.quantity * ii.unit_price), 0) as total_income
-            FROM invoices i
-            JOIN invoice_items ii ON i.id = ii.invoice_id
-            WHERE i.business_id = :bid AND i.status IN ('paid', 'approved')
+            SELECT COALESCE(SUM(total_amount), 0) as total_income
+            FROM sales_bills
+            WHERE business_id = :bid AND status != 'cancelled'
         ");
         $stmt->execute(['bid' => $businessId]);
         $totalIncome = (float)$stmt->fetchColumn();
@@ -69,8 +78,9 @@ class Report
         ];
     }
 
-    public function balanceSheet(int $businessId = 1): array
+    public function balanceSheet(int $businessId = 0): array
     {
+        $businessId = $this->bid($businessId);
         $types = ['asset', 'liability', 'equity'];
         $result = [];
 
@@ -120,13 +130,14 @@ class Report
         ];
     }
 
-    public function cashFlow(int $businessId = 1): array
+    public function cashFlow(int $businessId = 0): array
     {
+        $businessId = $this->bid($businessId);
+
         $stmt = $this->db->prepare("
-            SELECT COALESCE(SUM(ii.quantity * ii.unit_price), 0) as total_income
-            FROM invoices i
-            JOIN invoice_items ii ON i.id = ii.invoice_id
-            WHERE i.business_id = :bid AND i.status IN ('paid', 'approved')
+            SELECT COALESCE(SUM(paid_amount), 0) as total_income
+            FROM sales_bills
+            WHERE business_id = :bid AND status != 'cancelled'
         ");
         $stmt->execute(['bid' => $businessId]);
         $cashFromCustomers = (float)$stmt->fetchColumn();
